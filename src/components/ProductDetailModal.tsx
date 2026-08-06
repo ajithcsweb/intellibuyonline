@@ -198,19 +198,19 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
         </div>
 
         {/* Content Navigation Tabs */}
-        <div className="flex items-center gap-2 border-b border-white/10 pt-4 text-xs font-bold">
+        <div className="flex items-center gap-1 sm:gap-2 border-b border-white/10 pt-4 text-xs font-bold overflow-x-auto no-scrollbar whitespace-nowrap">
           <button
             onClick={() => setActiveTab('prices')}
-            className={`py-2 px-4 rounded-t-lg transition-colors ${
+            className={`py-2 px-3 sm:px-4 rounded-t-lg transition-colors shrink-0 ${
               activeTab === 'prices' ? 'bg-indigo-600 text-white border-b-2 border-indigo-400' : 'text-gray-400 hover:text-white'
             }`}
           >
-            Multi-Store Price Comparison ({product.stores.length})
+            Store Prices ({product.stores.length})
           </button>
 
           <button
             onClick={() => setActiveTab('history')}
-            className={`py-2 px-4 rounded-t-lg transition-colors ${
+            className={`py-2 px-3 sm:px-4 rounded-t-lg transition-colors shrink-0 ${
               activeTab === 'history' ? 'bg-indigo-600 text-white border-b-2 border-indigo-400' : 'text-gray-400 hover:text-white'
             }`}
           >
@@ -219,20 +219,20 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
 
           <button
             onClick={() => setActiveTab('specs')}
-            className={`py-2 px-4 rounded-t-lg transition-colors ${
+            className={`py-2 px-3 sm:px-4 rounded-t-lg transition-colors shrink-0 ${
               activeTab === 'specs' ? 'bg-indigo-600 text-white border-b-2 border-indigo-400' : 'text-gray-400 hover:text-white'
             }`}
           >
-            Technical Specifications
+            Specifications
           </button>
 
           <button
             onClick={() => setActiveTab('reviews')}
-            className={`py-2 px-4 rounded-t-lg transition-colors ${
+            className={`py-2 px-3 sm:px-4 rounded-t-lg transition-colors shrink-0 ${
               activeTab === 'reviews' ? 'bg-indigo-600 text-white border-b-2 border-indigo-400' : 'text-gray-400 hover:text-white'
             }`}
           >
-            Verified Reviews ({product.reviewsList?.length || 0})
+            Reviews ({product.reviewsList?.length || 0})
           </button>
         </div>
 

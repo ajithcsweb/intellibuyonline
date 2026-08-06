@@ -162,19 +162,19 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Global Search Bar */}
-        <div className="relative flex-1 max-w-xl hidden md:block">
+        <div className="relative flex-1 max-w-xl">
           <div className="relative flex items-center">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input
               type="text"
-              placeholder="Search 100,000+ products (e.g. iPhone 15, MacBook Air M3, OLED TV)..."
+              placeholder="Search 100,000+ products (e.g. iPhone 15, MacBook M3)..."
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
                 setShowSearchDropdown(true);
               }}
               onFocus={() => setShowSearchDropdown(true)}
-              className="w-full bg-slate-900/90 text-white text-sm rounded-xl pl-10 pr-10 py-2.5 border border-white/10 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all placeholder:text-gray-500"
+              className="w-full bg-slate-900/90 text-white text-xs sm:text-sm rounded-xl pl-9 sm:pl-10 pr-8 sm:pr-10 py-2 sm:py-2.5 border border-white/10 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all placeholder:text-gray-500"
             />
             {searchQuery && (
               <button 
@@ -302,7 +302,7 @@ export const Header: React.FC<HeaderProps> = ({
 
               {/* Categories Mega Menu Grid */}
               {showCategoriesMenu && (
-                <div className="absolute left-0 top-full mt-2 w-80 sm:w-[540px] bg-slate-900 border border-indigo-500/40 rounded-2xl shadow-2xl p-4 z-50 grid grid-cols-1 sm:grid-cols-2 gap-3 backdrop-blur-2xl animate-slideDown">
+                <div className="absolute left-0 top-full mt-2 w-[calc(100vw-2rem)] sm:w-[540px] max-w-[540px] bg-slate-900 border border-indigo-500/40 rounded-2xl shadow-2xl p-3 sm:p-4 z-50 grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 backdrop-blur-2xl animate-slideDown">
                   <div className="col-span-full pb-2 border-b border-white/10 flex items-center justify-between text-xs font-extrabold text-indigo-400">
                     <span className="flex items-center gap-1.5"><Grid size={14} /> SELECT PRODUCT CATEGORY</span>
                     <button onClick={() => setShowCategoriesMenu(false)} className="text-gray-400 hover:text-white"><X size={16} /></button>

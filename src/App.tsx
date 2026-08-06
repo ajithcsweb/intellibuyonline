@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Header } from './components/Header';
 import { HeroBanner } from './components/HeroBanner';
 import { CategoryNav } from './components/CategoryNav';
@@ -22,8 +22,16 @@ import {
   INITIAL_NOTIFICATIONS, 
   INITIAL_ADMIN_STATS 
 } from './data/mockData';
-import { Product, StoreName, AffiliateClickLog, NotificationItem } from './types';
+import { Product, StoreName, AffiliateClickLog, NotificationItem, Deal, Coupon } from './types';
 import { SlidersHorizontal, ArrowUpDown, Filter, Sparkles, CheckCircle, ExternalLink } from 'lucide-react';
+import { 
+  getProductsService, 
+  getDealsService, 
+  getCouponsService, 
+  insertProductService, 
+  logAffiliateClickService, 
+  getAffiliateLogsService 
+} from './services/supabaseService';
 
 export function App() {
   const [activeTab, setActiveTab] = useState<string>('shop');
@@ -37,6 +45,8 @@ export function App() {
 
   // Products & User Data State
   const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
+  const [deals, setDeals] = useState<Deal[]>(INITIAL_DEALS);
+  const [coupons, setCoupons] = useState<Coupon[]>(INITIAL_COUPONS);
   const [wishlistIds, setWishlistIds] = useState<string[]>(['prod-1']);
   const [comparedProducts, setComparedProducts] = useState<Product[]>([INITIAL_PRODUCTS[0], INITIAL_PRODUCTS[1]]);
   const [selectedDetailProduct, setSelectedDetailProduct] = useState<Product | null>(null);
@@ -47,6 +57,31 @@ export function App() {
   const [affiliateLogs, setAffiliateLogs] = useState<AffiliateClickLog[]>(INITIAL_AFFILIATE_LOGS);
   const [adminStats, setAdminStats] = useState(INITIAL_ADMIN_STATS);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Load live data from Supabase on mount
+  useEffect(() => {
+    async function loadSupabaseData() {
+      const [fetchedProducts, fetchedDeals, fetchedCoupons, fetchedLogs] = await Promise.all([
+        getProductsService(),
+        getDealsService(),
+        getCouponsService(),
+        getAffiliateLogsService()
+      ]);
+
+      if (fetchedProducts && fetchedProducts.length > 0) {
+        setProducts(fetchedProducts);
+        setComparedProducts([fetchedProducts[0], fetchedProducts[1] || fetchedProducts[0]]);
+        setAdminStats(prev => ({ ...prev, totalProducts: fetchedProducts.length }));
+      }
+      if (fetchedDeals && fetchedDeals.length > 0) setDeals(fetchedDeals);
+      if (fetchedCoupons && fetchedCoupons.length > 0) setCoupons(fetchedCoupons);
+      if (fetchedLogs && fetchedLogs.length > 0) {
+        setAffiliateLogs(fetchedLogs);
+        setAdminStats(prev => ({ ...prev, totalAffiliateClicks: fetchedLogs.length }));
+      }
+    }
+    loadSupabaseData();
+  }, []);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -72,6 +107,9 @@ export function App() {
       ...prev,
       totalAffiliateClicks: prev.totalAffiliateClicks + 1
     }));
+
+    // Async log into Supabase
+    logAffiliateClickService(newLog);
 
     showToast(`Redirecting to ${store} with affiliate tracking...`);
   };
@@ -137,6 +175,10 @@ export function App() {
       ...prev,
       totalProducts: prev.totalProducts + 1
     }));
+
+    // Async save to Supabase
+    insertProductService(newProd);
+
     showToast(`Added ${newProd.title} to catalog`);
   };
 
@@ -334,8 +376,8 @@ export function App() {
 
           {activeTab === 'deals' && (
             <DealsHub
-              deals={INITIAL_DEALS}
-              coupons={INITIAL_COUPONS}
+              deals={deals}
+              coupons={coupons}
               onTrackAffiliateClick={handleTrackAffiliateClick}
             />
           )}

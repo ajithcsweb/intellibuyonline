@@ -77,78 +77,78 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       </div>
 
       {/* Product Image Container */}
-      <div className="p-6 bg-slate-950/40 flex items-center justify-center relative overflow-hidden group-hover:bg-slate-950/60 transition-colors h-56">
+      <div className="p-3 sm:p-6 bg-slate-950/40 flex items-center justify-center relative overflow-hidden group-hover:bg-slate-950/60 transition-colors h-40 sm:h-56">
         <img
           src={product.mainImage}
           alt={product.title}
-          className="max-h-44 w-auto object-contain transition-transform duration-500 group-hover:scale-110"
+          className="max-h-32 sm:max-h-44 w-auto object-contain transition-transform duration-500 group-hover:scale-110"
         />
-        <div className="absolute bottom-2 left-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-slate-900/80 px-2 py-0.5 rounded border border-white/5">
+        <div className="absolute bottom-1 sm:bottom-2 left-2 sm:left-3 text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-slate-900/80 px-1.5 sm:px-2 py-0.5 rounded border border-white/5 truncate max-w-[80%]">
           {product.brand} • {product.subcategory}
         </div>
       </div>
 
       {/* Card Content Body */}
-      <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
+      <div className="p-3 sm:p-4 flex-1 flex flex-col justify-between space-y-2 sm:space-y-3">
         <div>
           {/* Rating & Reviews */}
-          <div className="flex items-center gap-1.5 text-xs mb-1.5">
-            <div className="flex items-center gap-1 text-amber-400 font-bold bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/20">
-              <Star size={12} className="fill-amber-400" />
+          <div className="flex items-center gap-1.5 text-xs mb-1">
+            <div className="flex items-center gap-1 text-amber-400 font-bold bg-amber-400/10 px-1.5 py-0.5 rounded border border-amber-400/20 text-[10px] sm:text-xs">
+              <Star size={11} className="fill-amber-400" />
               <span>{product.rating}</span>
             </div>
-            <span className="text-gray-400 text-[11px]">({product.reviewCount.toLocaleString('en-IN')} reviews)</span>
+            <span className="text-gray-400 text-[10px] sm:text-[11px] truncate">({product.reviewCount.toLocaleString('en-IN')})</span>
           </div>
 
           {/* Product Title */}
-          <h3 className="font-bold text-sm text-white line-clamp-2 hover:text-indigo-300 transition-colors cursor-pointer">
+          <h3 className="font-bold text-xs sm:text-sm text-white line-clamp-2 hover:text-indigo-300 transition-colors cursor-pointer">
             {product.title}
           </h3>
         </div>
 
         {/* Store Comparison Price Chips */}
-        <div className="space-y-2 pt-2 border-t border-white/5">
-          <div className="flex items-baseline justify-between">
-            <span className="text-xs text-gray-400 font-medium">Best Price:</span>
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-lg font-extrabold text-emerald-400 font-heading">
+        <div className="space-y-1.5 sm:space-y-2 pt-2 border-t border-white/5">
+          <div className="flex items-baseline justify-between flex-wrap gap-1">
+            <span className="text-[10px] sm:text-xs text-gray-400 font-medium">Best Price:</span>
+            <div className="flex items-baseline gap-1">
+              <span className="text-base sm:text-lg font-extrabold text-emerald-400 font-heading">
                 ₹{product.bestPrice.toLocaleString('en-IN')}
               </span>
-              <span className="text-xs text-gray-500 line-through">
+              <span className="text-[10px] sm:text-xs text-gray-500 line-through">
                 ₹{product.originalPrice.toLocaleString('en-IN')}
               </span>
             </div>
           </div>
 
           {/* Available Stores Badge List */}
-          <div className="flex items-center justify-between text-[11px] text-gray-400 bg-slate-950/60 p-2 rounded-lg border border-white/5">
-            <span className="font-medium">{product.stores.length} Stores Available:</span>
+          <div className="flex items-center justify-between text-[10px] sm:text-[11px] text-gray-400 bg-slate-950/60 p-1.5 sm:p-2 rounded-lg border border-white/5">
+            <span className="font-medium truncate">{product.stores.length} Stores:</span>
             <div className="flex items-center gap-1">
-              {product.stores.slice(0, 3).map((st, i) => (
+              {product.stores.slice(0, 2).map((st, i) => (
                 <span 
                   key={i} 
-                  className="px-1.5 py-0.5 rounded text-[10px] font-extrabold bg-white/10 text-gray-200"
+                  className="px-1.5 py-0.5 rounded text-[9px] sm:text-[10px] font-extrabold bg-white/10 text-gray-200"
                 >
                   {st.store}
                 </span>
               ))}
-              {product.stores.length > 3 && (
-                <span className="text-[10px] text-indigo-400 font-bold">+{product.stores.length - 3}</span>
+              {product.stores.length > 2 && (
+                <span className="text-[9px] text-indigo-400 font-bold">+{product.stores.length - 2}</span>
               )}
             </div>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-2 gap-2 pt-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2 pt-1">
           <button
             onClick={(e) => {
               e.stopPropagation();
               onOpenDetail(product);
             }}
-            className="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-gray-200 text-xs font-bold transition-all border border-white/10 flex items-center justify-center gap-1"
+            className="w-full py-1.5 sm:py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-gray-200 text-[11px] sm:text-xs font-bold transition-all border border-white/10 flex items-center justify-center gap-1"
           >
-            Compare Prices
+            Compare
           </button>
 
           {topStore && (
@@ -160,9 +160,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 e.stopPropagation();
                 onTrackAffiliateClick(product.id, topStore.store);
               }}
-              className="w-full py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-extrabold shadow-md shadow-emerald-900/30 transition-all flex items-center justify-center gap-1"
+              className="w-full py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-[11px] sm:text-xs font-extrabold shadow-md shadow-emerald-900/30 transition-all flex items-center justify-center gap-1 truncate"
             >
-              Buy on {topStore.store} <ExternalLink size={12} />
+              Buy {topStore.store} <ExternalLink size={11} />
             </a>
           )}
         </div>
