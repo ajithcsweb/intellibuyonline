@@ -126,6 +126,20 @@ ALTER TABLE public.coupons ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.affiliate_logs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
+-- Drop existing policies if re-running script to prevent 42710 errors
+DROP POLICY IF EXISTS "Allow public read access to products" ON public.products;
+DROP POLICY IF EXISTS "Allow public read access to store_prices" ON public.store_prices;
+DROP POLICY IF EXISTS "Allow public read access to price_history" ON public.price_history;
+DROP POLICY IF EXISTS "Allow public read access to deals" ON public.deals;
+DROP POLICY IF EXISTS "Allow public read access to coupons" ON public.coupons;
+DROP POLICY IF EXISTS "Allow public insert to products" ON public.products;
+DROP POLICY IF EXISTS "Allow public insert to affiliate_logs" ON public.affiliate_logs;
+DROP POLICY IF EXISTS "Allow public read access to affiliate_logs" ON public.affiliate_logs;
+DROP POLICY IF EXISTS "Allow public read access to profiles" ON public.profiles;
+DROP POLICY IF EXISTS "Allow users to view own profile" ON public.profiles;
+DROP POLICY IF EXISTS "Allow users to update own profile" ON public.profiles;
+DROP POLICY IF EXISTS "Allow profile insert during signup" ON public.profiles;
+
 -- Create policies for public access (select/insert)
 CREATE POLICY "Allow public read access to products" ON public.products FOR SELECT USING (true);
 CREATE POLICY "Allow public read access to store_prices" ON public.store_prices FOR SELECT USING (true);
@@ -140,5 +154,6 @@ CREATE POLICY "Allow public read access to profiles" ON public.profiles FOR SELE
 CREATE POLICY "Allow users to view own profile" ON public.profiles FOR SELECT USING (auth.uid() = id);
 CREATE POLICY "Allow users to update own profile" ON public.profiles FOR UPDATE USING (auth.uid() = id);
 CREATE POLICY "Allow profile insert during signup" ON public.profiles FOR INSERT WITH CHECK (true);
+
 
 
