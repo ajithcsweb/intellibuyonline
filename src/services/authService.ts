@@ -32,6 +32,19 @@ export async function signUpWithEmail(email: string, password: string, fullName:
     if (error) return { user: null, error: error.message };
 
     if (data.user) {
+      // Upsert profile into public.profiles table
+      try {
+        await supabase.from('profiles').upsert([
+          {
+            id: data.user.id,
+            email: data.user.email || email,
+            full_name: fullName
+          }
+        ], { onConflict: 'id' });
+      } catch (profileErr) {
+        console.warn('Profile upsert notice:', profileErr);
+      }
+
       return {
         user: {
           id: data.user.id,

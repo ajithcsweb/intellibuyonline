@@ -135,3 +135,5 @@ CREATE POLICY "Allow public insert to affiliate_logs" ON public.affiliate_logs F
 CREATE POLICY "Allow public read access to affiliate_logs" ON public.affiliate_logs FOR SELECT USING (true);
 CREATE POLICY "Allow users to view own profile" ON public.profiles FOR SELECT USING (auth.uid() = id);
 CREATE POLICY "Allow users to update own profile" ON public.profiles FOR UPDATE USING (auth.uid() = id);
+CREATE POLICY "Allow profile insert during signup" ON public.profiles FOR INSERT WITH CHECK (true);
+
