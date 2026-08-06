@@ -29,7 +29,15 @@ export async function signUpWithEmail(email: string, password: string, fullName:
       }
     });
 
-    if (error) return { user: null, error: error.message };
+    if (error) {
+      if (error.message.toLowerCase().includes('rate limit')) {
+        return {
+          user: null,
+          error: 'Email confirmation rate limit exceeded by Supabase. Please turn off "Confirm Email" in your Supabase Dashboard (Authentication -> Providers -> Email -> Uncheck Confirm email) to enable instant signups.'
+        };
+      }
+      return { user: null, error: error.message };
+    }
 
     if (data.user) {
       // Upsert profile into public.profiles table
