@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Mail, Lock, User, Sparkles, ArrowRight, CheckCircle2, AlertCircle, KeyRound, ShieldCheck } from 'lucide-react';
 import { signUpWithEmail, signInWithEmail, sendPasswordResetEmail, UserProfile } from '../services/authService';
+import { isSupabaseConfigured } from '../lib/supabase';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -149,6 +150,18 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             Access live price drop alerts, deal bookmarks & exclusive bank coupons
           </p>
         </div>
+
+        {/* Supabase Connection Status Banner */}
+        {!isSupabaseConfigured && (
+          <div className="mb-4 p-2.5 rounded-xl bg-amber-950/40 border border-amber-500/30 text-amber-300 text-[11px] font-semibold text-center space-y-1">
+            <p className="font-bold flex items-center justify-center gap-1">
+              <span>⚠️ Supabase Keys Missing on Vercel</span>
+            </p>
+            <p className="text-[10px] text-amber-200/80">
+              Please add <strong>VITE_SUPABASE_URL</strong> & <strong>VITE_SUPABASE_ANON_KEY</strong> in Vercel Settings ➡️ Environment Variables, then redeploy.
+            </p>
+          </div>
+        )}
 
         {/* Tabs Switcher */}
         {activeTab !== 'forgot' && (
