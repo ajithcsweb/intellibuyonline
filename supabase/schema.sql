@@ -84,13 +84,44 @@ CREATE TABLE IF NOT EXISTS public.affiliate_logs (
     user_region TEXT DEFAULT 'Live Visitor'
 );
 
--- Enable Row Level Security (RLS) and grant read access to all anonymous users
+-- 7. Create User Profiles Table linked to Supabase Auth
+CREATE TABLE IF NOT EXISTS public.profiles (
+    id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    email TEXT UNIQUE NOT NULL,
+    full_name TEXT,
+    avatar_url TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Automatic trigger to create profile record when a new user registers in Supabase Auth
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.profiles (id, email, full_name, avatar_url)
+  VALUES (
+    new.id,
+    new.email,
+    new.raw_user_meta_data->>'full_name',
+    new.raw_user_meta_data->>'avatar_url'
+  );
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Trigger execution binding
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+-- Enable Row Level Security (RLS)
 ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.store_prices ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.price_history ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.deals ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.coupons ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.affiliate_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
 -- Create policies for public access (select/insert)
 CREATE POLICY "Allow public read access to products" ON public.products FOR SELECT USING (true);
@@ -102,3 +133,5 @@ CREATE POLICY "Allow public read access to coupons" ON public.coupons FOR SELECT
 CREATE POLICY "Allow public insert to products" ON public.products FOR INSERT WITH CHECK (true);
 CREATE POLICY "Allow public insert to affiliate_logs" ON public.affiliate_logs FOR INSERT WITH CHECK (true);
 CREATE POLICY "Allow public read access to affiliate_logs" ON public.affiliate_logs FOR SELECT USING (true);
+CREATE POLICY "Allow users to view own profile" ON public.profiles FOR SELECT USING (auth.uid() = id);
+CREATE POLICY "Allow users to update own profile" ON public.profiles FOR UPDATE USING (auth.uid() = id);

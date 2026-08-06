@@ -28,6 +28,8 @@ import {
   Star
 } from 'lucide-react';
 import { Product, Category } from '../types';
+import { UserProfile } from '../services/authService';
+import { User, LogOut } from 'lucide-react';
 
 interface HeaderProps {
   activeTab: string;
@@ -43,6 +45,9 @@ interface HeaderProps {
   onToggleNotif: () => void;
   onSelectCategory: (categoryId: string) => void;
   selectedCategory: string;
+  user: UserProfile | null;
+  onOpenAuth: (tab?: 'login' | 'register' | 'forgot') => void;
+  onSignOut: () => void;
 }
 
 const CATEGORY_ICONS: Record<string, React.ElementType> = {
@@ -72,11 +77,15 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenProduct,
   onToggleNotif,
   onSelectCategory,
-  selectedCategory
+  selectedCategory,
+  user,
+  onOpenAuth,
+  onSignOut
 }) => {
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [showCategoriesMenu, setShowCategoriesMenu] = useState(false);
   const [showDealsMenu, setShowDealsMenu] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const categoriesRef = useRef<HTMLDivElement>(null);
@@ -261,6 +270,49 @@ export const Header: React.FC<HeaderProps> = ({
               </span>
             )}
           </button>
+
+          {/* User Member Authentication Control */}
+          {user ? (
+            <div className="relative">
+              <button
+                onClick={() => setShowUserMenu(!showUserMenu)}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-indigo-600/20 text-white border border-indigo-500/40 hover:bg-indigo-600/30 transition-all text-xs font-bold"
+              >
+                <div className="w-6 h-6 rounded-full bg-gradient-to-r from-indigo-500 to-emerald-500 flex items-center justify-center text-[10px] font-extrabold uppercase">
+                  {user.fullName ? user.fullName[0] : user.email[0]}
+                </div>
+                <span className="hidden lg:inline truncate max-w-[100px]">{user.fullName || user.email.split('@')[0]}</span>
+                <ChevronDown size={14} className={`transition-transform ${showUserMenu ? 'rotate-180' : ''}`} />
+              </button>
+
+              {showUserMenu && (
+                <div className="absolute right-0 top-full mt-2 w-56 bg-slate-900 border border-indigo-500/40 rounded-2xl shadow-2xl p-3 z-50 space-y-2 backdrop-blur-2xl animate-slideDown text-xs">
+                  <div className="pb-2 border-b border-white/10 px-2">
+                    <p className="font-extrabold text-white truncate">{user.fullName || 'Member'}</p>
+                    <p className="text-[10px] text-gray-400 truncate">{user.email}</p>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      onSignOut();
+                      setShowUserMenu(false);
+                    }}
+                    className="w-full text-left p-2 rounded-xl hover:bg-rose-600/20 text-rose-300 font-extrabold flex items-center gap-2 border border-white/5 transition-colors"
+                  >
+                    <LogOut size={15} className="text-rose-400" /> Sign Out
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <button
+              onClick={() => onOpenAuth('login')}
+              className="glow-btn px-3.5 py-2 text-xs font-extrabold flex items-center gap-1.5 shrink-0 shadow-lg shadow-indigo-600/30"
+            >
+              <User size={15} />
+              <span>Sign In</span>
+            </button>
+          )}
         </div>
       </div>
 

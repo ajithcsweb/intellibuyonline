@@ -10,6 +10,7 @@ import { AIAssistant } from './components/AIAssistant';
 import { BlogSection } from './components/BlogSection';
 import { AdminDashboard } from './components/AdminDashboard';
 import { NotificationDrawer } from './components/NotificationDrawer';
+import { AuthModal } from './components/AuthModal';
 import { Footer } from './components/Footer';
 
 import { 
@@ -32,11 +33,17 @@ import {
   logAffiliateClickService, 
   getAffiliateLogsService 
 } from './services/supabaseService';
+import { getCurrentUser, signOutUser, UserProfile } from './services/authService';
 
 export function App() {
   const [activeTab, setActiveTab] = useState<string>('shop');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+
+  // User Auth State
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+  const [authModalTab, setAuthModalTab] = useState<'login' | 'register' | 'forgot'>('login');
 
   // Filters State
   const [selectedStoreFilter, setSelectedStoreFilter] = useState<string>('all');
@@ -58,15 +65,18 @@ export function App() {
   const [adminStats, setAdminStats] = useState(INITIAL_ADMIN_STATS);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Load live data from Supabase on mount
+  // Load live data & user session from Supabase on mount
   useEffect(() => {
     async function loadSupabaseData() {
-      const [fetchedProducts, fetchedDeals, fetchedCoupons, fetchedLogs] = await Promise.all([
+      const [fetchedProducts, fetchedDeals, fetchedCoupons, fetchedLogs, fetchedUser] = await Promise.all([
         getProductsService(),
         getDealsService(),
         getCouponsService(),
-        getAffiliateLogsService()
+        getAffiliateLogsService(),
+        getCurrentUser()
       ]);
+
+      if (fetchedUser) setUser(fetchedUser);
 
       if (fetchedProducts && fetchedProducts.length > 0) {
         setProducts(fetchedProducts);
@@ -82,6 +92,17 @@ export function App() {
     }
     loadSupabaseData();
   }, []);
+
+  const handleOpenAuth = (tab: 'login' | 'register' | 'forgot' = 'login') => {
+    setAuthModalTab(tab);
+    setIsAuthModalOpen(true);
+  };
+
+  const handleSignOut = async () => {
+    await signOutUser();
+    setUser(null);
+    showToast('Signed out successfully.');
+  };
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -249,6 +270,10 @@ export function App() {
           onOpenProduct={(p) => setSelectedDetailProduct(p)}
           onToggleNotif={() => setIsNotifOpen(true)}
           onSelectCategory={(catId) => setSelectedCategory(catId)}
+          selectedCategory={selectedCategory}
+          user={user}
+          onOpenAuth={handleOpenAuth}
+          onSignOut={handleSignOut}
         />
 
         {/* Main Body View Content */}
@@ -421,6 +446,17 @@ export function App() {
           isCompared={comparedProducts.some(cp => cp.id === selectedDetailProduct.id)}
         />
       )}
+
+      {/* User Auth Membership Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        initialTab={authModalTab}
+        onLoginSuccess={(loggedInUser) => {
+          setUser(loggedInUser);
+          showToast(`Welcome back, ${loggedInUser.fullName || loggedInUser.email}!`);
+        }}
+      />
 
       {/* Notifications Drawer */}
       <NotificationDrawer
