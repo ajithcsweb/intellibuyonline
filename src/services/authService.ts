@@ -142,14 +142,64 @@ export async function getCurrentUser(): Promise<UserProfile | null> {
   try {
     const { data } = await supabase.auth.getUser();
     if (data.user) {
+      // Fetch avatarUrl from profile table if exists
+      const { data: dbProfile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', data.user.id)
+        .single();
+
       return {
         id: data.user.id,
         email: data.user.email || '',
-        fullName: data.user.user_metadata?.full_name || data.user.email?.split('@')[0]
+        fullName: dbProfile?.full_name || data.user.user_metadata?.full_name || data.user.email?.split('@')[0],
+        avatarUrl: dbProfile?.avatar_url || data.user.user_metadata?.avatar_url
       };
     }
     return null;
   } catch {
     return null;
+  }
+}
+
+// 6. Update User Profile (Full Name & Avatar)
+export async function updateUserProfile(
+  userId: string, 
+  fullName: string, 
+  avatarUrl?: string
+): Promise<{ success: boolean; error: string | null }> {
+  if (!isSupabaseConfigured) {
+    return { success: true, error: null };
+  }
+
+  try {
+    // 1. Update public.profiles table
+    const { error: dbErr } = await supabase
+      .from('profiles')
+      .upsert({
+        id: userId,
+        full_name: fullName,
+        avatar_url: avatarUrl
+      }, { onConflict: 'id' });
+
+    if (dbErr) {
+      console.warn('DB profile update notice:', dbErr.message);
+    }
+
+    // 2. Update Supabase Auth user metadata
+    const { error: authErr } = await supabase.auth.updateUser({
+      data: {
+        full_name: fullName,
+        avatar_url: avatarUrl
+      }
+    });
+
+    if (authErr) {
+      return { success: false, error: authErr.message };
+    }
+
+    return { success: true, error: null };
+  } catch (err: any) {
+    return { success: false, error: err.message || 'Failed to update profile' };
   }
 }

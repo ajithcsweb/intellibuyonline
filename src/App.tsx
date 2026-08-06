@@ -11,6 +11,7 @@ import { BlogSection } from './components/BlogSection';
 import { AdminDashboard } from './components/AdminDashboard';
 import { NotificationDrawer } from './components/NotificationDrawer';
 import { AuthModal } from './components/AuthModal';
+import { ProfileSettingsModal } from './components/ProfileSettingsModal';
 import { Footer } from './components/Footer';
 
 import { 
@@ -43,6 +44,7 @@ export function App() {
   // User Auth State
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+  const [isProfileSettingsOpen, setIsProfileSettingsOpen] = useState<boolean>(false);
   const [authModalTab, setAuthModalTab] = useState<'login' | 'register' | 'forgot'>('login');
 
   // Filters State
@@ -274,6 +276,7 @@ export function App() {
           user={user}
           onOpenAuth={handleOpenAuth}
           onSignOut={handleSignOut}
+          onOpenProfileSettings={() => setIsProfileSettingsOpen(true)}
         />
 
         {/* Main Body View Content */}
@@ -457,6 +460,19 @@ export function App() {
           showToast(`Welcome back, ${loggedInUser.fullName || loggedInUser.email}!`);
         }}
       />
+
+      {/* Profile Settings Modal */}
+      {user && (
+        <ProfileSettingsModal
+          isOpen={isProfileSettingsOpen}
+          onClose={() => setIsProfileSettingsOpen(false)}
+          user={user}
+          onProfileUpdated={(updatedUser) => {
+            setUser(updatedUser);
+            showToast('Profile updated successfully!');
+          }}
+        />
+      )}
 
       {/* Notifications Drawer */}
       <NotificationDrawer

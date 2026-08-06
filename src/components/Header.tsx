@@ -48,6 +48,7 @@ interface HeaderProps {
   user: UserProfile | null;
   onOpenAuth: (tab?: 'login' | 'register' | 'forgot') => void;
   onSignOut: () => void;
+  onOpenProfileSettings: () => void;
 }
 
 const CATEGORY_ICONS: Record<string, React.ElementType> = {
@@ -80,7 +81,8 @@ export const Header: React.FC<HeaderProps> = ({
   selectedCategory,
   user,
   onOpenAuth,
-  onSignOut
+  onSignOut,
+  onOpenProfileSettings
 }) => {
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [showCategoriesMenu, setShowCategoriesMenu] = useState(false);
@@ -278,19 +280,33 @@ export const Header: React.FC<HeaderProps> = ({
                 onClick={() => setShowUserMenu(!showUserMenu)}
                 className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-indigo-600/20 text-white border border-indigo-500/40 hover:bg-indigo-600/30 transition-all text-xs font-bold"
               >
-                <div className="w-6 h-6 rounded-full bg-gradient-to-r from-indigo-500 to-emerald-500 flex items-center justify-center text-[10px] font-extrabold uppercase">
-                  {user.fullName ? user.fullName[0] : user.email[0]}
-                </div>
+                {user.avatarUrl ? (
+                  <img src={user.avatarUrl} alt="" className="w-6 h-6 rounded-full object-cover border border-indigo-400" />
+                ) : (
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-indigo-500 to-emerald-500 flex items-center justify-center text-[10px] font-extrabold uppercase">
+                    {user.fullName ? user.fullName[0] : user.email[0]}
+                  </div>
+                )}
                 <span className="hidden lg:inline truncate max-w-[100px]">{user.fullName || user.email.split('@')[0]}</span>
                 <ChevronDown size={14} className={`transition-transform ${showUserMenu ? 'rotate-180' : ''}`} />
               </button>
 
               {showUserMenu && (
-                <div className="absolute right-0 top-full mt-2 w-56 bg-slate-900 border border-indigo-500/40 rounded-2xl shadow-2xl p-3 z-50 space-y-2 backdrop-blur-2xl animate-slideDown text-xs">
+                <div className="absolute right-0 top-full mt-2 w-56 bg-slate-900 border border-indigo-500/40 rounded-2xl shadow-2xl p-3 z-50 space-y-1.5 backdrop-blur-2xl animate-slideDown text-xs">
                   <div className="pb-2 border-b border-white/10 px-2">
                     <p className="font-extrabold text-white truncate">{user.fullName || 'Member'}</p>
                     <p className="text-[10px] text-gray-400 truncate">{user.email}</p>
                   </div>
+
+                  <button
+                    onClick={() => {
+                      onOpenProfileSettings();
+                      setShowUserMenu(false);
+                    }}
+                    className="w-full text-left p-2 rounded-xl hover:bg-indigo-600/20 text-indigo-300 font-extrabold flex items-center gap-2 border border-white/5 transition-colors"
+                  >
+                    <User size={15} className="text-indigo-400" /> Profile Settings
+                  </button>
 
                   <button
                     onClick={() => {
