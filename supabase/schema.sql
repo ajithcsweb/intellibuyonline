@@ -101,9 +101,12 @@ BEGIN
   VALUES (
     new.id,
     new.email,
-    new.raw_user_meta_data->>'full_name',
+    COALESCE(new.raw_user_meta_data->>'full_name', split_part(new.email, '@', 1)),
     new.raw_user_meta_data->>'avatar_url'
-  );
+  )
+  ON CONFLICT (id) DO UPDATE
+  SET email = EXCLUDED.email,
+      full_name = COALESCE(EXCLUDED.full_name, public.profiles.full_name);
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -133,7 +136,9 @@ CREATE POLICY "Allow public read access to coupons" ON public.coupons FOR SELECT
 CREATE POLICY "Allow public insert to products" ON public.products FOR INSERT WITH CHECK (true);
 CREATE POLICY "Allow public insert to affiliate_logs" ON public.affiliate_logs FOR INSERT WITH CHECK (true);
 CREATE POLICY "Allow public read access to affiliate_logs" ON public.affiliate_logs FOR SELECT USING (true);
+CREATE POLICY "Allow public read access to profiles" ON public.profiles FOR SELECT USING (true);
 CREATE POLICY "Allow users to view own profile" ON public.profiles FOR SELECT USING (auth.uid() = id);
 CREATE POLICY "Allow users to update own profile" ON public.profiles FOR UPDATE USING (auth.uid() = id);
 CREATE POLICY "Allow profile insert during signup" ON public.profiles FOR INSERT WITH CHECK (true);
+
 
