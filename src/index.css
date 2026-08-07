@@ -201,8 +201,37 @@ html.light ::-webkit-scrollbar-thumb:hover {
   background: rgba(99, 102, 241, 0.8);
 }
 
+/* Solid Non-Transparent Sticky Header */
+header {
+  background-color: #090d16 !important;
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html.light header {
+  background-color: #ffffff !important;
+  border-bottom-color: #e2e8f0 !important;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.08) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html.light header .bg-slate-950 {
+  background-color: #ffffff !important;
+}
+
+html.light header .bg-slate-900 {
+  background-color: #f8fafc !important;
+}
+
+html.light header .border-t,
+html.light header .border-b {
+  border-color: #e2e8f0 !important;
+}
+
 html.light .glass-panel {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.95);
   border-color: rgba(226, 232, 240, 0.8);
 }
 

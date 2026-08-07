@@ -120,7 +120,7 @@ export const Header: React.FC<HeaderProps> = ({
     : [];
 
   return (
-    <header className="sticky top-0 z-50 glass-panel border-b border-white/10 shadow-2xl">
+    <header className="sticky top-0 z-50 bg-slate-950 border-b border-white/10 shadow-2xl">
       {/* Top Banner Ticker */}
       <div className="bg-gradient-to-r from-indigo-900/90 via-purple-900/90 to-indigo-900/90 text-xs py-1.5 px-4 border-b border-white/5">
         <div className="max-w-7xl mx-auto flex items-center justify-between text-gray-300">
@@ -351,7 +351,7 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Main Navigation Bar */}
-      <div className="border-t border-white/10 bg-slate-950/95 px-4 shadow-inner">
+      <div className="border-t border-white/10 bg-slate-950 px-4 shadow-inner">
         <div className="max-w-7xl mx-auto flex items-center justify-between py-2 text-xs font-bold text-gray-200">
           <div className="flex items-center gap-2 sm:gap-4 overflow-x-auto no-scrollbar py-0.5">
             
