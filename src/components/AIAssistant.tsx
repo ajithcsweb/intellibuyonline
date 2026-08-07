@@ -11,7 +11,8 @@ import {
   ArrowRight,
   Key,
   Check,
-  Cpu
+  Cpu,
+  AlertTriangle
 } from 'lucide-react';
 import { Product } from '../types';
 import { 
@@ -91,11 +92,11 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
           {currentApiKey ? (
             <span className="bg-emerald-500/20 text-emerald-400 px-2.5 py-0.5 rounded-full border border-emerald-500/30 font-extrabold flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-              Connected (Gemini 2.5 Flash)
+              Connected (Live REST API)
             </span>
           ) : (
             <span className="bg-amber-500/20 text-amber-300 px-2.5 py-0.5 rounded-full border border-amber-500/30 font-semibold">
-              Default Engine (Add API Key for live Gemini REST)
+              Default Catalog AI (Add Gemini Key)
             </span>
           )}
         </div>
@@ -105,7 +106,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600/20 text-indigo-300 border border-indigo-500/40 hover:bg-indigo-600/30 transition-all font-bold"
         >
           <Key size={14} className="text-indigo-400" />
-          <span>{currentApiKey ? 'Change Gemini Key' : 'Configure Gemini API Key'}</span>
+          <span>{currentApiKey ? 'Manage Gemini Key' : 'Configure Gemini API Key'}</span>
         </button>
       </div>
 
@@ -126,12 +127,12 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
             </a>
           </div>
           <p className="text-gray-400 text-[11px]">
-            Enter your Google Gemini API Key to run live generative AI model inference directly on your website catalog. Key is stored locally in your browser.
+            Enter your Google Gemini API Key to run live generative AI model inference directly on your website catalog. Key is saved locally in your browser.
           </p>
           <div className="flex items-center gap-2">
             <input
               type="password"
-              placeholder="AIzaSy..."
+              placeholder="Paste your Gemini API Key (e.g. AIzaSy...)"
               value={apiKeyInput}
               onChange={(e) => setApiKeyInput(e.target.value)}
               className="flex-1 bg-slate-950 text-white rounded-xl px-3 py-2.5 border border-white/10 focus:border-indigo-500 focus:outline-none"
@@ -206,6 +207,26 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
       {/* AI Result Presentation Display Section */}
       {response && (
         <div className="bg-slate-900/90 border border-indigo-500/40 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl animate-fadeIn">
+          
+          {/* API Warning Notice if any */}
+          {response.error && (
+            <div className="p-4 rounded-2xl bg-amber-950/60 border border-amber-500/40 text-amber-200 text-xs flex items-start justify-between gap-3">
+              <div className="flex items-start gap-2">
+                <AlertTriangle size={18} className="text-amber-400 shrink-0 mt-0.5" />
+                <div>
+                  <strong className="text-amber-300 font-bold block">Gemini API Status Notice:</strong>
+                  <span>{response.error}</span>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowApiKeyModal(true)}
+                className="px-3 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold hover:bg-amber-500/30 transition-colors shrink-0"
+              >
+                Update Key
+              </button>
+            </div>
+          )}
+
           {/* AI Header Badge */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/10">
             <div className="flex items-center gap-3">
@@ -216,8 +237,9 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
                 <div className="flex items-center gap-2">
                   <h3 className="font-extrabold text-white text-base">IntelliBuy Gemini AI Synthesis</h3>
                   {response.isRealGemini ? (
-                    <span className="text-[10px] bg-emerald-500/20 text-emerald-300 font-extrabold px-2 py-0.5 rounded border border-emerald-500/30">
-                      ⚡ Google Gemini 2.5 Flash
+                    <span className="text-[10px] bg-emerald-500/20 text-emerald-300 font-extrabold px-2.5 py-0.5 rounded border border-emerald-500/30 flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                      Google Gemini AI Live
                     </span>
                   ) : (
                     <span className="text-[10px] bg-indigo-500/20 text-indigo-300 font-bold px-2 py-0.5 rounded border border-indigo-500/30">
@@ -238,9 +260,9 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
             <h4 className="text-xs font-extrabold text-indigo-400 uppercase tracking-wider font-heading">
               Market Inventory & Technical Analysis
             </h4>
-            <p className="text-xs sm:text-sm text-gray-300 leading-relaxed bg-slate-950/60 p-4 rounded-xl border border-white/5">
+            <div className="text-xs sm:text-sm text-gray-300 leading-relaxed bg-slate-950/60 p-4 sm:p-5 rounded-xl border border-white/5 whitespace-pre-line">
               {response.summary}
-            </p>
+            </div>
           </div>
 
           {/* Recommended Products Display Grid */}
@@ -253,7 +275,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
               {response.recommendedProducts.map((product, idx) => (
                 <div 
                   key={product.id}
-                  className="bg-slate-950 p-4 rounded-2xl border border-white/10 hover:border-indigo-500/50 transition-all flex flex-col justify-between space-y-3"
+                  className="bg-slate-950 p-4 rounded-2xl border border-white/10 hover:border-indigo-500/50 transition-all flex flex-col justify-between space-y-3 shadow-md"
                 >
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
@@ -303,11 +325,11 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
           </div>
 
           {/* AI Verdict Box */}
-          <div className="bg-indigo-950/40 border border-indigo-500/30 p-4 rounded-xl text-xs text-indigo-200 leading-relaxed font-medium flex items-start gap-2">
+          <div className="bg-indigo-950/40 border border-indigo-500/30 p-4 rounded-xl text-xs text-indigo-200 leading-relaxed font-medium flex items-start gap-2 shadow-inner">
             <span className="text-base leading-none">💡</span>
             <div>
               <strong className="text-indigo-300 font-extrabold block mb-0.5">Gemini AI Final Buying Verdict:</strong>
-              {response.verdict}
+              <div className="whitespace-pre-line">{response.verdict}</div>
             </div>
           </div>
         </div>

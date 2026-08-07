@@ -6,6 +6,7 @@ export interface GeminiAdviceResult {
   recommendedProducts: Product[];
   verdict: string;
   isRealGemini: boolean;
+  error?: string | null;
 }
 
 export function getStoredGeminiApiKey(): string {
@@ -26,7 +27,7 @@ export async function fetchGeminiAdvice(
 ): Promise<GeminiAdviceResult> {
   const apiKey = getStoredGeminiApiKey();
 
-  // Create lightweight product summary list for prompt grounding
+  // Grounding context list
   const catalogContext = products.map(p => ({
     id: p.id,
     title: p.title,
@@ -47,23 +48,25 @@ Analyze user requests and recommend products strictly from the provided live cat
 Available Catalog:
 ${JSON.stringify(catalogContext, null, 2)}
 
-Respond strictly in raw JSON format matching this schema without markdown blocks:
+You MUST reply strictly in JSON format matching this schema:
 {
-  "summary": "In-depth, technical and market analysis of products related to the request, comparing prices, performance, and features across Amazon, Flipkart, Croma.",
-  "recommendedProductIds": ["prod-id-1", "prod-id-2"],
-  "verdict": "Final concise buying verdict highlighting why the #1 pick is the best deal."
+  "summary": "In-depth technical and market analysis of products related to the request, comparing prices, performance, and features across Amazon, Flipkart, Croma.",
+  "recommendedProductIds": ["prod-1", "prod-2"],
+  "recommendedTitles": ["exact or partial title matches from catalog"],
+  "verdict": "Final concise buying verdict highlighting why the top recommendation is the best purchase right now."
 }`;
 
       const userPrompt = `User Query: "${query}"`;
 
-      // Call Google Gemini REST API (gemini-2.5-flash or fallback gemini-1.5-flash)
+      // Supported Gemini Model endpoints in order of preference
       const endpoints = [
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`
       ];
 
       let responseData: any = null;
-      let lastError: Error | null = null;
+      let apiErrorMessage: string | null = null;
 
       for (const endpoint of endpoints) {
         try {
@@ -82,63 +85,112 @@ Respond strictly in raw JSON format matching this schema without markdown blocks
               ],
               generationConfig: {
                 temperature: 0.2,
-                maxOutputTokens: 1024
+                maxOutputTokens: 1024,
+                responseMimeType: 'application/json'
               }
             })
           });
 
           if (res.ok) {
             responseData = await res.json();
+            apiErrorMessage = null;
             break;
           } else {
-            const errText = await res.text();
-            console.warn(`Gemini API endpoint error (${res.status}):`, errText);
+            const errJson = await res.json().catch(() => null);
+            const msg = errJson?.error?.message || `HTTP ${res.status} error from Gemini API`;
+            apiErrorMessage = msg;
+            console.warn(`Gemini API endpoint warning (${res.status}):`, msg);
           }
         } catch (err: any) {
-          lastError = err;
+          apiErrorMessage = err?.message || 'Network connection failed to Gemini API';
         }
       }
 
       if (responseData && responseData.candidates?.[0]?.content?.parts?.[0]?.text) {
         const rawText = responseData.candidates[0].content.parts[0].text;
-        // Clean markdown backticks if returned
-        const cleanedText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
-        const parsed = JSON.parse(cleanedText);
+        const cleanedText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
+        
+        let parsed: any = {};
+        try {
+          parsed = JSON.parse(cleanedText);
+        } catch {
+          parsed = {
+            summary: rawText,
+            verdict: 'AI analysis complete.'
+          };
+        }
 
         const matchedProducts: Product[] = [];
+        const addedIds = new Set<string>();
+
+        // 1. Try matching by returned product IDs
         if (Array.isArray(parsed.recommendedProductIds)) {
           parsed.recommendedProductIds.forEach((id: string) => {
-            const p = products.find(prod => prod.id === id);
-            if (p) matchedProducts.push(p);
+            const found = products.find(p => p.id.toLowerCase() === id.toLowerCase());
+            if (found && !addedIds.has(found.id)) {
+              matchedProducts.push(found);
+              addedIds.add(found.id);
+            }
           });
         }
 
-        // Fill up to 3 products if fewer matched
-        if (matchedProducts.length === 0) {
-          matchedProducts.push(...fallbackMatchProducts(query, products));
+        // 2. Try matching by returned product titles
+        if (Array.isArray(parsed.recommendedTitles)) {
+          parsed.recommendedTitles.forEach((title: string) => {
+            const tLower = title.toLowerCase();
+            const found = products.find(p => p.title.toLowerCase().includes(tLower) || tLower.includes(p.title.toLowerCase()));
+            if (found && !addedIds.has(found.id)) {
+              matchedProducts.push(found);
+              addedIds.add(found.id);
+            }
+          });
+        }
+
+        // 3. Fallback to keyword matching if fewer than 3 products matched
+        if (matchedProducts.length < 3) {
+          const fallback = fallbackMatchProducts(query, products);
+          fallback.forEach(f => {
+            if (!addedIds.has(f.id)) {
+              matchedProducts.push(f);
+              addedIds.add(f.id);
+            }
+          });
         }
 
         return {
           query,
-          summary: parsed.summary || `Analysis completed for "${query}".`,
+          summary: parsed.summary || `Gemini AI analysis completed for "${query}".`,
           recommendedProducts: matchedProducts.slice(0, 3),
-          verdict: parsed.verdict || `Top recommendation based on price performance analysis.`,
-          isRealGemini: true
+          verdict: parsed.verdict || `Recommendation based on real-time price-performance analysis.`,
+          isRealGemini: true,
+          error: null
+        };
+      } else if (apiErrorMessage) {
+        // Return fallback results with explicit error message for display
+        const fallbackMatches = fallbackMatchProducts(query, products);
+        return {
+          query,
+          summary: `[Smart Advisor System] Gemini API returned an error: "${apiErrorMessage}". Showing smart catalog comparison results instead.`,
+          recommendedProducts: fallbackMatches,
+          verdict: `Recommendation: The ${fallbackMatches[0]?.title || 'selected item'} offers top price-performance rating.`,
+          isRealGemini: false,
+          error: apiErrorMessage
         };
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching Gemini AI response:', error);
     }
   }
 
-  // Fallback intelligent simulation if no API key or API call fails
+  // Fallback intelligent simulation if no API key set
   const fallbackMatches = fallbackMatchProducts(query, products);
   return {
     query,
-    summary: `[Smart Catalog Engine] Analyzed query "${query}" across 100,000+ products in electronics, mobiles, and computing. Evaluated thermal limits, verified ratings, and historical pricing from Amazon, Flipkart, and Croma.`,
+    summary: `[Smart Catalog Engine] Analyzed query "${query}" across live catalog products. Evaluated price-to-performance metrics, thermal stability, verified customer ratings, and historical price trends from Amazon, Flipkart, Croma.`,
     recommendedProducts: fallbackMatches,
-    verdict: `Recommendation: The ${fallbackMatches[0]?.title || 'selected item'} offers the highest value-for-money ratio with instant store discounts active.`,
-    isRealGemini: false
+    verdict: `Recommendation: The ${fallbackMatches[0]?.title || 'selected item'} offers the highest value-for-money ratio with active card discounts.`,
+    isRealGemini: false,
+    error: apiKey ? null : 'No Gemini API Key provided. Please add VITE_GEMINI_API_KEY in .env or click "Configure Gemini API Key".'
   };
 }
 
