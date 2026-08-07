@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { X, User, Mail, ShieldCheck, CheckCircle2, AlertCircle, Sparkles, Camera, Save } from 'lucide-react';
+import { X, User, Mail, ShieldCheck, CheckCircle2, AlertCircle, Sparkles, Camera, Save, Sun, Moon } from 'lucide-react';
 import { UserProfile, updateUserProfile } from '../services/authService';
+import { useTheme } from '../context/ThemeContext';
 
 interface ProfileSettingsModalProps {
   isOpen: boolean;
@@ -24,6 +25,7 @@ export const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
   user,
   onProfileUpdated
 }) => {
+  const { theme, setTheme } = useTheme();
   const [fullName, setFullName] = useState(user.fullName || '');
   const [avatarUrl, setAvatarUrl] = useState(user.avatarUrl || PRESET_AVATARS[0]);
   const [customAvatar, setCustomAvatar] = useState(user.avatarUrl || '');
@@ -187,6 +189,48 @@ export const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
                 value={user.email}
                 className="w-full bg-slate-950/50 text-gray-400 text-xs rounded-xl pl-10 pr-4 py-3 border border-white/5 cursor-not-allowed"
               />
+            </div>
+          </div>
+
+          {/* Interface Appearance Theme Selection */}
+          <div className="space-y-2 pt-2 border-t border-white/10">
+            <label className="text-xs font-bold text-gray-300 block">Appearance Mode</label>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setTheme('dark')}
+                className={`p-3 rounded-xl border flex items-center gap-2.5 text-xs font-extrabold transition-all ${
+                  theme === 'dark'
+                    ? 'bg-indigo-600/20 border-indigo-500 text-indigo-300 shadow-md'
+                    : 'bg-slate-950 border-white/10 text-gray-400 hover:border-white/20'
+                }`}
+              >
+                <div className="w-7 h-7 rounded-lg bg-slate-900 border border-white/10 flex items-center justify-center text-amber-400">
+                  <Moon size={15} />
+                </div>
+                <div className="text-left">
+                  <div>Dark Mode</div>
+                  <div className="text-[10px] text-gray-500 font-normal">Sleek midnight visual layout</div>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setTheme('light')}
+                className={`p-3 rounded-xl border flex items-center gap-2.5 text-xs font-extrabold transition-all ${
+                  theme === 'light'
+                    ? 'bg-indigo-600/20 border-indigo-500 text-indigo-300 shadow-md'
+                    : 'bg-slate-950 border-white/10 text-gray-400 hover:border-white/20'
+                }`}
+              >
+                <div className="w-7 h-7 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-500">
+                  <Sun size={15} />
+                </div>
+                <div className="text-left">
+                  <div>Light Mode</div>
+                  <div className="text-[10px] text-gray-500 font-normal">Crisp bright daylight layout</div>
+                </div>
+              </button>
             </div>
           </div>
 

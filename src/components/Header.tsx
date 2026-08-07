@@ -25,11 +25,14 @@ import {
   ShoppingBasket,
   SlidersHorizontal,
   Zap,
-  Star
+  Star,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { Product, Category } from '../types';
 import { UserProfile } from '../services/authService';
 import { User, LogOut } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 
 interface HeaderProps {
   activeTab: string;
@@ -84,6 +87,7 @@ export const Header: React.FC<HeaderProps> = ({
   onSignOut,
   onOpenProfileSettings
 }) => {
+  const { theme, toggleTheme } = useTheme();
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [showCategoriesMenu, setShowCategoriesMenu] = useState(false);
   const [showDealsMenu, setShowDealsMenu] = useState(false);
@@ -270,6 +274,20 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="absolute -top-1.5 -right-1.5 bg-rose-500 text-white text-[10px] font-extrabold w-5 h-5 rounded-full flex items-center justify-center border-2 border-slate-950 animate-bounce">
                 {unreadNotifCount}
               </span>
+            )}
+          </button>
+
+          {/* Dark / Light Mode Switcher */}
+          <button
+            onClick={toggleTheme}
+            className="p-2.5 rounded-xl text-xs font-semibold bg-slate-900/80 text-gray-300 border border-white/10 hover:border-indigo-500/50 hover:bg-indigo-600/10 transition-all group flex items-center justify-center"
+            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            aria-label="Toggle Theme"
+          >
+            {theme === 'dark' ? (
+              <Sun size={18} className="text-amber-400 group-hover:rotate-45 transition-transform duration-300" />
+            ) : (
+              <Moon size={18} className="text-indigo-600 group-hover:-rotate-12 transition-transform duration-300" />
             )}
           </button>
 
@@ -526,7 +544,16 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           <div className="space-y-1.5 text-xs font-extrabold text-gray-200">
-            <div className="text-[10px] text-gray-400 uppercase tracking-widest px-2 py-1 font-bold">NAVIGATION PAGES</div>
+            <div className="flex items-center justify-between px-2 py-1">
+              <span className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">NAVIGATION & THEME</span>
+              <button
+                onClick={toggleTheme}
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-950 border border-white/10 text-[11px] font-bold text-amber-400"
+              >
+                {theme === 'dark' ? <Sun size={14} className="text-amber-400" /> : <Moon size={14} className="text-indigo-400" />}
+                <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+              </button>
+            </div>
             <button
               onClick={() => {
                 onSelectCategory('all');
