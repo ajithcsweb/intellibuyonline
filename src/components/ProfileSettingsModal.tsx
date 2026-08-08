@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
-import { X, User, Mail, Phone, ShieldCheck, CheckCircle2, AlertCircle, Sparkles, Camera, Save, Sun, Moon } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, User, Mail, Phone, ShieldCheck, CheckCircle2, AlertCircle, Sparkles, Camera, Save } from 'lucide-react';
 import { UserProfile, updateUserProfile } from '../services/authService';
-import { useTheme } from '../context/ThemeContext';
 
 interface ProfileSettingsModalProps {
   isOpen: boolean;
@@ -25,15 +24,28 @@ export const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
   user,
   onProfileUpdated
 }) => {
-  const { theme, setTheme } = useTheme();
   const [fullName, setFullName] = useState(user.fullName || '');
   const [phone, setPhone] = useState(user.phone || '');
-  const [avatarUrl, setAvatarUrl] = useState(user.avatarUrl || PRESET_AVATARS[0]);
-  const [customAvatar, setCustomAvatar] = useState(user.avatarUrl || '');
+  
+  // Clean Avatar Selection State
+  const initialAvatar = user.avatarUrl || PRESET_AVATARS[0];
+  const [selectedAvatar, setSelectedAvatar] = useState<string>(initialAvatar);
+  const [customAvatarInput, setCustomAvatarInput] = useState<string>(
+    PRESET_AVATARS.includes(initialAvatar) ? '' : initialAvatar
+  );
 
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  // Sync state when user prop changes
+  useEffect(() => {
+    setFullName(user.fullName || '');
+    setPhone(user.phone || '');
+    const currentAvatar = user.avatarUrl || PRESET_AVATARS[0];
+    setSelectedAvatar(currentAvatar);
+    setCustomAvatarInput(PRESET_AVATARS.includes(currentAvatar) ? '' : currentAvatar);
+  }, [user]);
 
   if (!isOpen) return null;
 
@@ -48,7 +60,7 @@ export const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
     }
 
     setLoading(true);
-    const finalAvatar = customAvatar.trim() || avatarUrl;
+    const finalAvatar = (customAvatarInput.trim() || selectedAvatar).trim() || PRESET_AVATARS[0];
     const { success, error } = await updateUserProfile(user.id, fullName.trim(), finalAvatar, phone.trim());
     setLoading(false);
 
@@ -68,6 +80,8 @@ export const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
       }, 800);
     }
   };
+
+  const activeDisplayAvatar = (customAvatarInput.trim() || selectedAvatar).trim() || PRESET_AVATARS[0];
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto" onClick={onClose}>
@@ -119,7 +133,7 @@ export const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
 
             <div className="flex items-center gap-4 py-2">
               <img 
-                src={customAvatar || avatarUrl} 
+                src={activeDisplayAvatar} 
                 alt="Avatar Preview" 
                 className="w-16 h-16 rounded-2xl object-cover border-2 border-[#1A73E8] shadow-md bg-[#F8F9FA] shrink-0" 
               />
@@ -138,13 +152,13 @@ export const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
                   key={idx}
                   type="button"
                   onClick={() => {
-                    setAvatarUrl(url);
-                    setCustomAvatar('');
+                    setSelectedAvatar(url);
+                    setCustomAvatarInput('');
                   }}
                   className={`w-11 h-11 rounded-xl p-0.5 border transition-all overflow-hidden bg-[#F8F9FA] ${
-                    (avatarUrl === url && !customAvatar) 
-                      ? 'border-[#1A73E8] ring-2 ring-[#1A73E8]/30 scale-105' 
-                      : 'border-[#E8EAED] opacity-70 hover:opacity-100'
+                    (selectedAvatar === url && !customAvatarInput.trim()) 
+                      ? 'border-[#1A73E8] ring-2 ring-[#1A73E8]/30 scale-105 opacity-100' 
+                      : 'border-[#E8EAED] opacity-60 hover:opacity-100'
                   }`}
                 >
                   <img src={url} alt="" className="w-full h-full object-cover rounded-lg" />
@@ -158,8 +172,14 @@ export const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
               <input
                 type="url"
                 placeholder="https://example.com/my-photo.jpg"
-                value={customAvatar}
-                onChange={(e) => setCustomAvatar(e.target.value)}
+                value={customAvatarInput}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setCustomAvatarInput(val);
+                  if (val.trim()) {
+                    setSelectedAvatar(val.trim());
+                  }
+                }}
                 className="w-full bg-[#F8F9FA] text-[#202124] text-xs rounded-xl px-3 py-2 border border-[#E8EAED] focus:border-[#1A73E8] focus:outline-none placeholder:text-[#5F6368]"
               />
             </div>

@@ -10,6 +10,23 @@ export interface UserProfile {
 }
 
 const LOCAL_STORAGE_SESSION_KEY = 'intellibuy_user_session';
+const DEFAULT_PRESET_AVATAR = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80';
+
+// Helper to get local cached session
+function getLocalSession(): UserProfile | null {
+  try {
+    const cached = localStorage.getItem(LOCAL_STORAGE_SESSION_KEY);
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (parsed && parsed.id) {
+        return parsed;
+      }
+    }
+  } catch (e) {
+    console.warn('LocalStorage read error:', e);
+  }
+  return null;
+}
 
 // Helper to save session locally
 function saveLocalSession(user: UserProfile) {
@@ -36,13 +53,16 @@ export async function signUpWithEmail(
   fullName: string,
   phone?: string
 ): Promise<{ user: UserProfile | null; error: string | null }> {
+  const initialAvatar = DEFAULT_PRESET_AVATAR;
+
   // If Supabase not configured, use instant demo registration
   if (!isSupabaseConfigured) {
     const userProfile: UserProfile = {
       id: `user-${Date.now()}`,
       email,
       fullName,
-      phone
+      phone,
+      avatarUrl: initialAvatar
     };
     saveLocalSession(userProfile);
     return { user: userProfile, error: null };
@@ -55,7 +75,8 @@ export async function signUpWithEmail(
       options: {
         data: {
           full_name: fullName,
-          phone_number: phone
+          phone_number: phone,
+          avatar_url: initialAvatar
         }
       }
     });
@@ -66,7 +87,8 @@ export async function signUpWithEmail(
         id: `user-${Date.now()}`,
         email,
         fullName,
-        phone
+        phone,
+        avatarUrl: initialAvatar
       };
       saveLocalSession(fallbackUser);
       return { user: fallbackUser, error: null };
@@ -77,7 +99,8 @@ export async function signUpWithEmail(
         id: data.user.id,
         email: data.user.email || email,
         fullName: data.user.user_metadata?.full_name || fullName,
-        phone: data.user.user_metadata?.phone_number || phone
+        phone: data.user.user_metadata?.phone_number || phone,
+        avatarUrl: data.user.user_metadata?.avatar_url || initialAvatar
       };
 
       // Upsert profile into public.profiles table
@@ -87,7 +110,8 @@ export async function signUpWithEmail(
             id: data.user.id,
             email: data.user.email || email,
             full_name: fullName,
-            phone_number: phone
+            phone_number: phone,
+            avatar_url: initialAvatar
           }
         ], { onConflict: 'id' });
       } catch (profileErr) {
@@ -102,7 +126,8 @@ export async function signUpWithEmail(
       id: `user-${Date.now()}`,
       email,
       fullName,
-      phone
+      phone,
+      avatarUrl: initialAvatar
     };
     saveLocalSession(fallbackUser);
     return { user: fallbackUser, error: null };
@@ -111,7 +136,8 @@ export async function signUpWithEmail(
       id: `user-${Date.now()}`,
       email,
       fullName,
-      phone
+      phone,
+      avatarUrl: initialAvatar
     };
     saveLocalSession(fallbackUser);
     return { user: fallbackUser, error: null };
@@ -127,12 +153,15 @@ export async function signInWithEmail(
     return { user: null, error: 'Please enter both email and password.' };
   }
 
+  const cachedSession = getLocalSession();
+
   if (!isSupabaseConfigured) {
     const demoUser: UserProfile = {
-      id: `user-demo-${Date.now()}`,
+      id: cachedSession?.id || `user-demo-${Date.now()}`,
       email,
-      fullName: email.split('@')[0] || 'Member',
-      phone: '+91 98765 43210'
+      fullName: cachedSession?.fullName || email.split('@')[0] || 'Member',
+      phone: cachedSession?.phone || '+91 98765 43210',
+      avatarUrl: cachedSession?.avatarUrl || DEFAULT_PRESET_AVATAR
     };
     saveLocalSession(demoUser);
     return { user: demoUser, error: null };
@@ -149,9 +178,11 @@ export async function signInWithEmail(
       const namePart = email.split('@')[0] || 'Member';
       const formattedName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
       const fallbackUser: UserProfile = {
-        id: `user-${Date.now()}`,
+        id: cachedSession?.id || `user-${Date.now()}`,
         email,
-        fullName: formattedName
+        fullName: cachedSession?.fullName || formattedName,
+        phone: cachedSession?.phone,
+        avatarUrl: cachedSession?.avatarUrl || DEFAULT_PRESET_AVATAR
       };
       saveLocalSession(fallbackUser);
       return { user: fallbackUser, error: null };
@@ -160,6 +191,7 @@ export async function signInWithEmail(
     if (data.user) {
       let dbPhone = data.user.user_metadata?.phone_number;
       let dbName = data.user.user_metadata?.full_name;
+      let dbAvatar = data.user.user_metadata?.avatar_url;
 
       try {
         const { data: dbProfile } = await supabase
@@ -171,6 +203,7 @@ export async function signInWithEmail(
         if (dbProfile) {
           if (dbProfile.phone_number) dbPhone = dbProfile.phone_number;
           if (dbProfile.full_name) dbName = dbProfile.full_name;
+          if (dbProfile.avatar_url) dbAvatar = dbProfile.avatar_url;
         }
       } catch (dbErr) {
         console.warn('Profile fetch notice:', dbErr);
@@ -179,8 +212,9 @@ export async function signInWithEmail(
       const userProfile: UserProfile = {
         id: data.user.id,
         email: data.user.email || email,
-        fullName: dbName || email.split('@')[0],
-        phone: dbPhone
+        fullName: dbName || cachedSession?.fullName || email.split('@')[0],
+        phone: dbPhone || cachedSession?.phone,
+        avatarUrl: dbAvatar || cachedSession?.avatarUrl || DEFAULT_PRESET_AVATAR
       };
       saveLocalSession(userProfile);
       return { user: userProfile, error: null };
@@ -189,7 +223,9 @@ export async function signInWithEmail(
     const fallbackUser: UserProfile = {
       id: `user-${Date.now()}`,
       email,
-      fullName: email.split('@')[0]
+      fullName: cachedSession?.fullName || email.split('@')[0],
+      phone: cachedSession?.phone,
+      avatarUrl: cachedSession?.avatarUrl || DEFAULT_PRESET_AVATAR
     };
     saveLocalSession(fallbackUser);
     return { user: fallbackUser, error: null };
@@ -197,7 +233,9 @@ export async function signInWithEmail(
     const fallbackUser: UserProfile = {
       id: `user-${Date.now()}`,
       email,
-      fullName: email.split('@')[0]
+      fullName: cachedSession?.fullName || email.split('@')[0],
+      phone: cachedSession?.phone,
+      avatarUrl: cachedSession?.avatarUrl || DEFAULT_PRESET_AVATAR
     };
     saveLocalSession(fallbackUser);
     return { user: fallbackUser, error: null };
@@ -206,11 +244,13 @@ export async function signInWithEmail(
 
 // 3. Quick Demo Sign In (Instant 1-Click Login)
 export async function quickDemoSignIn(): Promise<{ user: UserProfile; error: null }> {
+  const cachedSession = getLocalSession();
   const demoUser: UserProfile = {
-    id: 'user-demo-instant',
-    email: 'member@intellibuy.in',
-    fullName: 'IntelliBuy Member',
-    phone: '+91 98765 43210'
+    id: cachedSession?.id || 'user-demo-instant',
+    email: cachedSession?.email || 'member@intellibuy.in',
+    fullName: cachedSession?.fullName || 'IntelliBuy Member',
+    phone: cachedSession?.phone || '+91 98765 43210',
+    avatarUrl: cachedSession?.avatarUrl || DEFAULT_PRESET_AVATAR
   };
   saveLocalSession(demoUser);
   return { user: demoUser, error: null };
@@ -255,36 +295,37 @@ export async function signOutUser(): Promise<void> {
 
 // 6. Get Current User Session (Checks Supabase + LocalStorage Fallback)
 export async function getCurrentUser(): Promise<UserProfile | null> {
-  // Check Local Storage first for cached session
-  try {
-    const cached = localStorage.getItem(LOCAL_STORAGE_SESSION_KEY);
-    if (cached) {
-      const parsed = JSON.parse(cached);
-      if (parsed && parsed.email) {
-        return parsed;
-      }
-    }
-  } catch (e) {
-    console.warn('LocalStorage read error:', e);
-  }
+  const cachedUser = getLocalSession();
 
-  if (!isSupabaseConfigured) return null;
+  if (!isSupabaseConfigured) {
+    return cachedUser;
+  }
 
   try {
     const { data } = await supabase.auth.getUser();
     if (data.user) {
-      const { data: dbProfile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', data.user.id)
-        .single();
+      let dbProfile: any = null;
+      try {
+        const { data: res } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', data.user.id)
+          .single();
+        dbProfile = res;
+      } catch (e) {
+        console.warn('DB profile fetch notice:', e);
+      }
+
+      const finalName = dbProfile?.full_name || data.user.user_metadata?.full_name || cachedUser?.fullName || data.user.email?.split('@')[0];
+      const finalPhone = dbProfile?.phone_number || data.user.user_metadata?.phone_number || cachedUser?.phone;
+      const finalAvatar = dbProfile?.avatar_url || data.user.user_metadata?.avatar_url || cachedUser?.avatarUrl || DEFAULT_PRESET_AVATAR;
 
       const userProfile: UserProfile = {
         id: data.user.id,
-        email: data.user.email || '',
-        fullName: dbProfile?.full_name || data.user.user_metadata?.full_name || data.user.email?.split('@')[0],
-        phone: dbProfile?.phone_number || data.user.user_metadata?.phone_number || data.user.user_metadata?.phone,
-        avatarUrl: dbProfile?.avatar_url || data.user.user_metadata?.avatar_url
+        email: data.user.email || cachedUser?.email || '',
+        fullName: finalName,
+        phone: finalPhone,
+        avatarUrl: finalAvatar
       };
       saveLocalSession(userProfile);
       return userProfile;
@@ -293,7 +334,7 @@ export async function getCurrentUser(): Promise<UserProfile | null> {
     console.warn('Supabase getUser error:', e);
   }
 
-  return null;
+  return cachedUser;
 }
 
 // 7. Update User Profile (Full Name, Avatar & Mobile Phone Number)
@@ -303,28 +344,17 @@ export async function updateUserProfile(
   avatarUrl?: string,
   phone?: string
 ): Promise<{ success: boolean; error: string | null }> {
-  // Update local session
-  try {
-    const cached = localStorage.getItem(LOCAL_STORAGE_SESSION_KEY);
-    let updatedProfile: UserProfile;
-    if (cached) {
-      updatedProfile = JSON.parse(cached);
-      updatedProfile.fullName = fullName;
-      if (avatarUrl) updatedProfile.avatarUrl = avatarUrl;
-      if (phone !== undefined) updatedProfile.phone = phone;
-    } else {
-      updatedProfile = {
-        id: userId,
-        email: '',
-        fullName,
-        avatarUrl,
-        phone
-      };
-    }
-    saveLocalSession(updatedProfile);
-  } catch (e) {
-    console.warn('Update local session error:', e);
-  }
+  const cached = getLocalSession();
+  const updatedProfile: UserProfile = {
+    id: userId,
+    email: cached?.email || '',
+    fullName: fullName,
+    avatarUrl: avatarUrl !== undefined ? avatarUrl : cached?.avatarUrl,
+    phone: phone !== undefined ? phone : cached?.phone
+  };
+
+  // 1. Immediately persist to localStorage so website refresh keeps updated avatar
+  saveLocalSession(updatedProfile);
 
   if (!isSupabaseConfigured) {
     return { success: true, error: null };
