@@ -170,7 +170,7 @@ export const Header: React.FC<HeaderProps> = ({
           <div>
             <div className="flex items-center gap-1">
               <span className="font-extrabold text-xl tracking-tight text-white font-heading">Intelli<span className="text-indigo-400">Buy</span></span>
-              <span className="text-[10px] font-extrabold bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-500/30">.online</span>
+              <span className="text-[10px] font-extrabold bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-500/30">.in</span>
             </div>
             <p className="text-[11px] text-gray-400 tracking-wide font-medium hidden sm:block">Smart Price Comparison & AI Deals Engine</p>
           </div>

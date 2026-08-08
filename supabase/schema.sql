@@ -1,4 +1,4 @@
--- IntelliBuy Online - Supabase PostgreSQL Schema
+-- IntelliBuy.in - Supabase PostgreSQL Schema
 -- Copy and paste this script into your Supabase Dashboard -> SQL Editor and click RUN
 
 -- 1. Create Products Table

@@ -18,7 +18,7 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onSelectCategory }
                 <Sparkles size={18} />
               </div>
               <span className="font-extrabold text-xl text-white font-heading">
-                Intelli<span className="text-indigo-400">Buy</span>.online
+                Intelli<span className="text-indigo-400">Buy</span>.in
               </span>
             </div>
             <p className="text-gray-400 text-xs leading-relaxed max-w-sm">
@@ -116,10 +116,10 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onSelectCategory }
         {/* Affiliate Legal Disclosure */}
         <div className="border-t border-white/10 pt-6 text-[11px] text-gray-500 leading-relaxed bg-slate-900/40 p-4 rounded-xl border border-white/5 space-y-2">
           <p>
-            <strong>Mandatory Affiliate Disclosure:</strong> IntelliBuy.online is an independent product discovery and price comparison platform. We participate in affiliate advertising programs (including Amazon Associates Program, Flipkart Affiliate Network, Croma Partner Program, and others) designed to provide a means for sites to earn advertising fees by linking to merchant stores. Product prices and availability are accurate as of the date/time indicated and are subject to change without notice.
+            <strong>Mandatory Affiliate Disclosure:</strong> IntelliBuy.in is an independent product discovery and price comparison platform. We participate in affiliate advertising programs (including Amazon Associates Program, Flipkart Affiliate Network, Croma Partner Program, and others) designed to provide a means for sites to earn advertising fees by linking to merchant stores. Product prices and availability are accurate as of the date/time indicated and are subject to change without notice.
           </p>
           <div className="flex flex-wrap items-center justify-between text-gray-400 font-medium">
-            <span>© 2026 IntelliBuy.online. All Rights Reserved.</span>
+            <span>© 2026 IntelliBuy.in. All Rights Reserved.</span>
             <div className="flex items-center gap-4 text-[11px]">
               <a href="#" className="hover:underline">Privacy Policy</a>
               <a href="#" className="hover:underline">Terms of Service</a>
