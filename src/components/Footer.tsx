@@ -65,11 +65,6 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onSelectCategory }
                   Compare Products
                 </button>
               </li>
-              <li>
-                <button onClick={() => setActiveTab('ai-assistant')} className="text-[#1A73E8] font-bold hover:underline">
-                  Ask AI Advisor
-                </button>
-              </li>
             </ul>
           </div>
 

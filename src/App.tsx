@@ -9,7 +9,6 @@ import { DealsHub } from './components/DealsHub';
 import { PriceHistorySection } from './components/PriceHistorySection';
 import { SmartDealPicks } from './components/SmartDealPicks';
 import { HowItWorks } from './components/HowItWorks';
-import { AIAssistant } from './components/AIAssistant';
 import { BlogSection } from './components/BlogSection';
 import { AdminDashboard } from './components/AdminDashboard';
 import { NotificationDrawer } from './components/NotificationDrawer';
@@ -455,15 +454,6 @@ export function App() {
             <DealsHub
               deals={deals}
               coupons={coupons}
-              onTrackAffiliateClick={handleTrackAffiliateClick}
-            />
-          )}
-
-          {/* AI ADVISOR TAB */}
-          {activeTab === 'ai-assistant' && (
-            <AIAssistant
-              products={products}
-              onOpenProduct={(p) => setSelectedDetailProduct(p)}
               onTrackAffiliateClick={handleTrackAffiliateClick}
             />
           )}

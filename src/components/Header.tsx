@@ -447,18 +447,6 @@ export const Header: React.FC<HeaderProps> = ({
               <GitCompare size={15} /> Compare Products
             </button>
 
-            {/* AI Advisor Tab */}
-            <button
-              onClick={() => setActiveTab('ai-assistant')}
-              className={`py-2 px-3.5 rounded-full transition-all flex items-center gap-1.5 whitespace-nowrap font-bold ${
-                activeTab === 'ai-assistant'
-                  ? 'bg-[#1A73E8] text-white'
-                  : 'text-[#1A73E8] hover:bg-[#E8F0FE]'
-              }`}
-            >
-              <Sparkles size={15} /> Ask AI Advisor
-            </button>
-
           </div>
 
           <div className="hidden lg:flex items-center gap-3 text-xs font-medium text-[#5F6368]">
@@ -524,16 +512,6 @@ export const Header: React.FC<HeaderProps> = ({
               className="w-full text-left py-2.5 px-3 rounded-xl hover:bg-[#F8F9FA] flex items-center gap-2"
             >
               <GitCompare size={16} className="text-[#1A73E8]" /> Compare Products ({compareCount})
-            </button>
-
-            <button
-              onClick={() => {
-                setActiveTab('ai-assistant');
-                setIsMobileMenuOpen(false);
-              }}
-              className="w-full text-left py-2.5 px-3 rounded-xl bg-[#E8F0FE] text-[#1A73E8] font-bold flex items-center gap-2"
-            >
-              <Sparkles size={16} /> AI Smart Advisor
             </button>
           </div>
         </div>
