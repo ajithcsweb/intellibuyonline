@@ -83,95 +83,73 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
-      {/* Gemini Engine Banner Status Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-900/90 p-4 rounded-2xl border border-indigo-500/30 text-xs shadow-lg">
-        <div className="flex items-center gap-2 text-indigo-300 font-bold">
-          <Cpu size={18} className="text-indigo-400 animate-pulse shrink-0" />
-          <span>Google Gemini AI Engine:</span>
-          {currentApiKey ? (
-            <span className="bg-emerald-500/20 text-emerald-400 px-2.5 py-0.5 rounded-full border border-emerald-500/30 font-extrabold flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-              Connected (Live REST API)
-            </span>
-          ) : (
-            <span className="bg-amber-500/20 text-amber-300 px-2.5 py-0.5 rounded-full border border-amber-500/30 font-semibold">
-              Default Catalog AI (Add Gemini Key)
-            </span>
-          )}
+    <div className="space-y-8">
+      {/* Top Controls Bar */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-[#E8EAED]">
+        <div className="flex items-center gap-2 text-xs font-semibold text-[#5F6368]">
+          <Cpu size={16} className="text-[#1A73E8]" />
+          <span>Model Engine: <strong>Google Gemini 3.6 Flash</strong></span>
         </div>
 
         <button
           onClick={() => setShowApiKeyModal(!showApiKeyModal)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600/20 text-indigo-300 border border-indigo-500/40 hover:bg-indigo-600/30 transition-all font-bold"
+          className="text-xs font-semibold text-[#1A73E8] bg-[#E8F0FE] hover:bg-[#D2E3FC] px-3.5 py-1.5 rounded-full transition-all border border-[#1A73E8]/20 flex items-center gap-1.5"
         >
-          <Key size={14} className="text-indigo-400" />
-          <span>{currentApiKey ? 'Manage Gemini Key' : 'Configure Gemini API Key'}</span>
+          <Key size={14} />
+          <span>{currentApiKey ? 'Custom Gemini Key Configured' : 'Configure Custom API Key'}</span>
         </button>
       </div>
 
-      {/* API Key Modal / Expandable Box */}
+      {/* Optional Gemini Key Input Panel */}
       {showApiKeyModal && (
-        <form onSubmit={handleSaveApiKey} className="bg-slate-900 border border-indigo-500/40 p-5 rounded-2xl space-y-3 shadow-2xl animate-slideDown text-xs">
-          <div className="flex items-center justify-between">
-            <h4 className="font-extrabold text-white flex items-center gap-1.5">
-              <Key size={16} className="text-indigo-400" /> Google Gemini API Credentials
-            </h4>
-            <a
-              href="https://aistudio.google.com/app/apikey"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-indigo-400 hover:underline font-bold flex items-center gap-1 text-[11px]"
-            >
-              Get Free Gemini API Key <ExternalLink size={12} />
-            </a>
+        <form onSubmit={handleSaveApiKey} className="bg-white p-5 rounded-2xl border border-[#E8EAED] space-y-3 shadow-xs">
+          <div className="flex items-center justify-between text-xs font-bold text-[#202124]">
+            <span className="flex items-center gap-1.5"><Key size={14} className="text-[#1A73E8]" /> ENTER GEMINI API KEY</span>
+            <button type="button" onClick={() => setShowApiKeyModal(false)} className="text-[#5F6368] hover:text-[#202124]">✕</button>
           </div>
-          <p className="text-gray-400 text-[11px]">
-            Enter your Google Gemini API Key to run live generative AI model inference directly on your website catalog. Key is saved locally in your browser.
-          </p>
           <div className="flex items-center gap-2">
             <input
               type="password"
-              placeholder="Paste your Gemini API Key (e.g. AIzaSy...)"
+              placeholder="AIzaSy..."
               value={apiKeyInput}
               onChange={(e) => setApiKeyInput(e.target.value)}
-              className="flex-1 bg-slate-950 text-white rounded-xl px-3 py-2.5 border border-white/10 focus:border-indigo-500 focus:outline-none"
+              className="flex-1 bg-[#F8F9FA] text-[#202124] text-xs rounded-full px-4 py-2.5 border border-[#E8EAED] focus:border-[#1A73E8] focus:bg-white focus:outline-none"
             />
             <button
               type="submit"
-              className="glow-btn px-4 py-2.5 font-extrabold shrink-0"
+              className="btn-primary px-4 py-2 text-xs font-bold shrink-0 rounded-full"
             >
-              {apiKeySavedSuccess ? <Check size={16} className="text-emerald-300" /> : 'Save API Key'}
+              {apiKeySavedSuccess ? <Check size={16} className="text-white" /> : 'Save API Key'}
             </button>
           </div>
         </form>
       )}
 
-      {/* Main Header Hero Banner */}
-      <div className="text-center space-y-3 bg-gradient-to-b from-indigo-950/80 via-slate-900 to-slate-900 p-8 rounded-3xl border border-indigo-500/30 shadow-2xl relative overflow-hidden">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-bold border border-indigo-500/30 uppercase tracking-widest">
-          <Sparkles size={14} className="text-indigo-400 animate-spin" /> Next-Gen Google Gemini Product Advisor
+      {/* Main Hero Header Banner */}
+      <div className="text-center space-y-4 bg-white p-6 sm:p-10 rounded-3xl border border-[#E8EAED] shadow-xs relative overflow-hidden">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#E8F0FE] text-[#1A73E8] text-xs font-bold uppercase tracking-wider">
+          <Sparkles size={14} className="text-[#1A73E8]" /> Next-Gen Google Gemini AI Advisor
         </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white font-heading">Ask IntelliBuy AI</h1>
-        <p className="text-xs sm:text-sm text-gray-300 max-w-xl mx-auto">
-          Describe your budget, preferred features, or use-case. Google Gemini AI cross-references live products and store prices across Amazon, Flipkart & Croma to synthesize ideal recommendations.
+        <h1 className="text-3xl sm:text-4xl font-bold text-[#202124]">Ask IntelliBuy AI</h1>
+        <p className="text-xs sm:text-sm text-[#5F6368] max-w-xl mx-auto leading-relaxed">
+          Describe your budget or specs. Google Gemini AI synthesizes live product ratings and store prices across Amazon, Flipkart & Croma to find your ideal match.
         </p>
 
         {/* Prompt Input Field */}
-        <div className="max-w-2xl mx-auto relative pt-4">
-          <div className="relative flex items-center">
+        <div className="max-w-2xl mx-auto relative pt-2">
+          <div className="relative flex flex-col sm:flex-row items-center gap-2">
             <input
               type="text"
-              placeholder="e.g. Find me the best laptop for video editing under ₹1.5 Lakh with OLED screen..."
+              placeholder="e.g. Best laptop for video editing under ₹1.5 Lakh..."
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleGenerate()}
-              className="w-full bg-slate-950 text-white text-sm rounded-2xl pl-4 pr-36 py-4 border border-indigo-500/40 focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-500/20 shadow-2xl placeholder:text-gray-500"
+              className="w-full bg-[#F8F9FA] text-[#202124] text-xs sm:text-sm rounded-full pl-4 pr-4 sm:pr-36 py-3.5 border border-[#E8EAED] focus:border-[#1A73E8] focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#1A73E8]/15"
             />
             <button
               onClick={() => handleGenerate()}
               disabled={isGenerating || !prompt.trim()}
-              className="absolute right-2 top-1/2 -translate-y-1/2 glow-btn px-4 py-2.5 text-xs font-extrabold disabled:opacity-50"
+              className="w-full sm:w-auto sm:absolute sm:right-2 sm:top-1/2 sm:-translate-y-1/2 btn-primary px-5 py-2.5 text-xs font-bold disabled:opacity-50 justify-center"
             >
               {isGenerating ? (
                 <>
@@ -179,159 +157,82 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({
                 </>
               ) : (
                 <>
-                  Ask Gemini AI <Send size={14} />
+                  Ask AI <Send size={13} />
                 </>
               )}
             </button>
           </div>
+        </div>
 
-          {/* Quick Prompts */}
-          <div className="flex flex-wrap items-center justify-center gap-2 pt-4 text-xs">
-            <span className="text-gray-400 font-semibold">Try asking:</span>
-            {QUICK_PROMPTS.map((qp, i) => (
-              <button
-                key={i}
-                onClick={() => {
-                  setPrompt(qp);
-                  handleGenerate(qp);
-                }}
-                className="bg-slate-900 hover:bg-indigo-950/60 text-indigo-300 px-3 py-1.5 rounded-xl border border-indigo-500/30 transition-colors text-[11px] font-medium"
-              >
-                "{qp}"
-              </button>
-            ))}
-          </div>
+        {/* Quick Suggestion Chips */}
+        <div className="flex flex-wrap items-center justify-center gap-2 pt-3">
+          <span className="text-[11px] text-[#5F6368] font-semibold w-full sm:w-auto">Popular Queries:</span>
+          {QUICK_PROMPTS.map((qp, idx) => (
+            <button
+              key={idx}
+              onClick={() => {
+                setPrompt(qp);
+                handleGenerate(qp);
+              }}
+              className="text-[11px] bg-[#F8F9FA] hover:bg-[#E8F0FE] text-[#5F6368] hover:text-[#1A73E8] font-medium px-3 py-1 rounded-full border border-[#E8EAED] transition-all"
+            >
+              "{qp}"
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* AI Result Presentation Display Section */}
+      {/* AI Advice Output Result Container */}
       {response && (
-        <div className="bg-slate-900/90 border border-indigo-500/40 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl animate-fadeIn">
-          
-          {/* API Warning Notice if any */}
-          {response.error && (
-            <div className="p-4 rounded-2xl bg-amber-950/60 border border-amber-500/40 text-amber-200 text-xs flex items-start justify-between gap-3">
-              <div className="flex items-start gap-2">
-                <AlertTriangle size={18} className="text-amber-400 shrink-0 mt-0.5" />
-                <div>
-                  <strong className="text-amber-300 font-bold block">Gemini API Status Notice:</strong>
-                  <span>{response.error}</span>
-                </div>
-              </div>
-              <button
-                onClick={() => setShowApiKeyModal(true)}
-                className="px-3 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold hover:bg-amber-500/30 transition-colors shrink-0"
-              >
-                Update Key
-              </button>
-            </div>
-          )}
-
-          {/* AI Header Badge */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/10">
+        <div className="bg-white p-6 sm:p-8 rounded-3xl border border-[#E8EAED] shadow-xs space-y-6 animate-fadeIn">
+          <div className="flex items-center justify-between pb-4 border-b border-[#E8EAED]">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-600/40 shrink-0">
+              <div className="w-10 h-10 rounded-2xl bg-[#E8F0FE] text-[#1A73E8] flex items-center justify-center font-bold">
                 <Bot size={22} />
               </div>
               <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="font-extrabold text-white text-base">IntelliBuy Gemini AI Synthesis</h3>
-                  {response.isRealGemini ? (
-                    <span className="text-[10px] bg-emerald-500/20 text-emerald-300 font-extrabold px-2.5 py-0.5 rounded border border-emerald-500/30 flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-                      Google Gemini AI Live
-                    </span>
-                  ) : (
-                    <span className="text-[10px] bg-indigo-500/20 text-indigo-300 font-bold px-2 py-0.5 rounded border border-indigo-500/30">
-                      Smart Catalog AI Engine
-                    </span>
-                  )}
-                </div>
-                <p className="text-[11px] text-gray-400">Query: "{response.query}"</p>
+                <h3 className="font-bold text-[#202124] text-base sm:text-lg">IntelliBuy Gemini AI Synthesis</h3>
+                <p className="text-xs text-[#5F6368]">Synthesized recommendations for: "{prompt || 'Custom Search'}"</p>
               </div>
             </div>
-            <span className="text-xs bg-emerald-500/20 text-emerald-300 font-bold px-3 py-1 rounded-full border border-emerald-500/30 shrink-0">
-              ✓ Verified Live Catalog Prices
+
+            <span className="text-[10px] bg-[#E6F4EA] text-[#188038] font-bold px-2.5 py-1 rounded-full border border-[#CEEAD6] flex items-center gap-1">
+              <ShieldCheck size={12} /> Verified Recommendations
             </span>
           </div>
 
-          {/* AI Summary Text */}
-          <div className="space-y-2">
-            <h4 className="text-xs font-extrabold text-indigo-400 uppercase tracking-wider font-heading">
-              Market Inventory & Technical Analysis
-            </h4>
-            <div className="text-xs sm:text-sm text-gray-300 leading-relaxed bg-slate-950/60 p-4 sm:p-5 rounded-xl border border-white/5 whitespace-pre-line">
-              {response.summary}
-            </div>
+          <div className="prose max-w-none text-xs sm:text-sm text-[#202124] leading-relaxed whitespace-pre-line bg-[#F8F9FA] p-5 rounded-2xl border border-[#E8EAED]">
+            {response.summary}
           </div>
 
-          {/* Recommended Products Display Grid */}
-          <div className="space-y-4">
-            <h4 className="text-xs font-extrabold text-indigo-400 uppercase tracking-wider font-heading">
-              Matched Top Product Recommendations ({response.recommendedProducts.length})
-            </h4>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {response.recommendedProducts.map((product, idx) => (
-                <div 
-                  key={product.id}
-                  className="bg-slate-950 p-4 rounded-2xl border border-white/10 hover:border-indigo-500/50 transition-all flex flex-col justify-between space-y-3 shadow-md"
-                >
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-extrabold bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded">
-                        #{idx + 1} Best Match
-                      </span>
-                      <span className="text-xs font-extrabold text-emerald-400">
-                        ₹{product.bestPrice.toLocaleString('en-IN')}
-                      </span>
+          {/* Recommended Products Grid */}
+          {response.recommendedProducts && response.recommendedProducts.length > 0 && (
+            <div className="space-y-3 pt-2">
+              <h4 className="text-xs font-bold text-[#5F6368] uppercase tracking-wider">Top Matched Products</h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {response.recommendedProducts.map(p => (
+                  <div
+                    key={p.id}
+                    onClick={() => onOpenProduct(p)}
+                    className="material-card p-4 rounded-2xl bg-white border border-[#E8EAED] hover:border-[#BDC1C6] cursor-pointer flex flex-col justify-between"
+                  >
+                    <div className="flex items-center gap-3 mb-3">
+                      <img src={p.mainImage} alt={p.title} className="w-16 h-16 object-contain bg-[#F8F9FA] p-1.5 rounded-xl border border-[#E8EAED]" />
+                      <div>
+                        <span className="text-[10px] font-bold text-[#1A73E8] uppercase">{p.brand}</span>
+                        <h5 className="text-xs font-bold text-[#202124] line-clamp-2">{p.title}</h5>
+                      </div>
                     </div>
 
-                    <img src={product.mainImage} alt={product.title} className="w-full h-32 object-contain py-2" />
-                    <h5 className="text-xs font-bold text-white line-clamp-2">{product.title}</h5>
-
-                    <ul className="text-[11px] text-gray-400 space-y-1 pt-1">
-                      {product.pros.slice(0, 2).map((pro, i) => (
-                        <li key={i} className="flex items-start gap-1">
-                          <CheckCircle2 size={12} className="text-emerald-400 shrink-0 mt-0.5" />
-                          <span className="line-clamp-1">{pro}</span>
-                        </li>
-                      ))}
-                    </ul>
+                    <div className="flex items-center justify-between pt-2 border-t border-[#E8EAED]">
+                      <span className="text-base font-bold text-[#188038]">₹{p.bestPrice.toLocaleString('en-IN')}</span>
+                      <button className="btn-secondary text-[11px] font-bold px-3 py-1">View Deal</button>
+                    </div>
                   </div>
-
-                  <div className="pt-2 border-t border-white/10 flex items-center gap-2">
-                    <button
-                      onClick={() => onOpenProduct(product)}
-                      className="w-full py-2 bg-slate-900 hover:bg-slate-800 text-xs text-gray-200 font-bold rounded-lg border border-white/10"
-                    >
-                      Specs & Graph
-                    </button>
-                    {product.stores[0] && (
-                      <a
-                        href={product.stores[0].url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={() => onTrackAffiliateClick(product.id, product.stores[0].store)}
-                        className="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-xs text-white font-extrabold rounded-lg text-center shadow"
-                      >
-                        Buy ↗
-                      </a>
-                    )}
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-
-          {/* AI Verdict Box */}
-          <div className="bg-indigo-950/40 border border-indigo-500/30 p-4 rounded-xl text-xs text-indigo-200 leading-relaxed font-medium flex items-start gap-2 shadow-inner">
-            <span className="text-base leading-none">💡</span>
-            <div>
-              <strong className="text-indigo-300 font-extrabold block mb-0.5">Gemini AI Final Buying Verdict:</strong>
-              <div className="whitespace-pre-line">{response.verdict}</div>
-            </div>
-          </div>
+          )}
         </div>
       )}
     </div>

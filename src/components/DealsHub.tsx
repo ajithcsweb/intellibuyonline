@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Tag, Clock, ExternalLink, Copy, Check, Flame, ShieldAlert, Sparkles, Percent } from 'lucide-react';
+import { Tag, Clock, ExternalLink, Copy, Check, Flame, Percent } from 'lucide-react';
 import { Deal, Coupon } from '../types';
 
 interface DealsHubProps {
@@ -29,31 +29,31 @@ export const DealsHub: React.FC<DealsHubProps> = ({
   return (
     <div className="space-y-10">
       {/* Header Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-rose-950 via-slate-900 to-indigo-950 p-6 md:p-8 border border-white/10 shadow-2xl">
+      <div className="relative overflow-hidden rounded-3xl bg-white p-6 md:p-8 border border-[#E8EAED] shadow-xs">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
           <div className="space-y-2">
-            <span className="badge-tag badge-deal inline-flex items-center gap-1">
+            <span className="badge-discount inline-flex items-center gap-1">
               <Flame size={13} /> Verified Today's Offers
             </span>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white">Deals, Coupons & Bank Offers</h1>
-            <p className="text-xs text-gray-300 max-w-xl">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#202124]">Deals, Coupons & Bank Offers</h1>
+            <p className="text-xs text-[#5F6368] max-w-xl">
               Verified daily coupon codes, bank cashbacks (HDFC, ICICI, Axis), and price drops directly synced from merchant affiliate APIs.
             </p>
           </div>
 
           {/* Bank Offer Highlights */}
-          <div className="bg-slate-900/80 p-4 rounded-xl border border-white/10 flex items-center gap-4 text-xs font-semibold">
-            <div className="text-center border-r border-white/10 pr-4">
-              <span className="text-amber-400 font-bold block text-sm">HDFC Bank</span>
-              <span className="text-[10px] text-gray-400">₹3,000 Off</span>
+          <div className="bg-[#F8F9FA] p-4 rounded-2xl border border-[#E8EAED] flex items-center gap-4 text-xs font-semibold w-full md:w-auto justify-around">
+            <div className="text-center border-r border-[#E8EAED] pr-4">
+              <span className="text-[#F9AB00] font-bold block text-sm">HDFC Bank</span>
+              <span className="text-[10px] text-[#5F6368]">₹3,000 Off</span>
             </div>
-            <div className="text-center border-r border-white/10 pr-4">
-              <span className="text-blue-400 font-bold block text-sm">ICICI Card</span>
-              <span className="text-[10px] text-gray-400">10% Instant</span>
+            <div className="text-center border-r border-[#E8EAED] pr-4">
+              <span className="text-[#1A73E8] font-bold block text-sm">ICICI Card</span>
+              <span className="text-[10px] text-[#5F6368]">10% Instant</span>
             </div>
             <div className="text-center">
-              <span className="text-emerald-400 font-bold block text-sm">Axis Bank</span>
-              <span className="text-[10px] text-gray-400">5% Unlimited</span>
+              <span className="text-[#188038] font-bold block text-sm">Axis Bank</span>
+              <span className="text-[10px] text-[#5F6368]">5% Unlimited</span>
             </div>
           </div>
         </div>
@@ -62,44 +62,44 @@ export const DealsHub: React.FC<DealsHubProps> = ({
       {/* Section 1: Today's Deals Grid */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-extrabold text-white flex items-center gap-2 font-heading">
-            <Flame className="text-rose-500" size={20} /> Today's Flash Deals
+          <h2 className="text-xl sm:text-2xl font-bold text-[#202124] flex items-center gap-2">
+            <Flame className="text-[#D93025]" size={20} /> Today's Flash Deals
           </h2>
-          <span className="text-xs text-gray-400 flex items-center gap-1">
-            <Clock size={14} className="text-rose-400" /> Resets in 6 hours
+          <span className="text-xs text-[#5F6368] flex items-center gap-1">
+            <Clock size={14} className="text-[#D93025]" /> Verified today
           </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {deals.map(deal => (
             <div 
               key={deal.id}
-              className="glass-card p-5 border border-white/10 hover:border-rose-500/40 bg-slate-900/90 flex flex-col justify-between space-y-4"
+              className="material-card p-5 border border-[#E8EAED] hover:border-[#BDC1C6] bg-white flex flex-col justify-between space-y-4 rounded-2xl"
             >
               <div className="space-y-3">
-                <div className="relative h-40 bg-slate-950 rounded-xl overflow-hidden p-2 flex items-center justify-center">
+                <div className="relative h-40 bg-[#F8F9FA] rounded-xl overflow-hidden p-2 flex items-center justify-center border border-[#E8EAED]">
                   <img src={deal.image} alt={deal.title} className="max-h-36 w-auto object-contain" />
-                  <span className="absolute top-2 left-2 bg-rose-600 text-white font-extrabold text-[10px] uppercase px-2 py-0.5 rounded shadow">
+                  <span className="absolute top-2 left-2 badge-best-price">
                     {deal.discount}
                   </span>
-                  <span className="absolute top-2 right-2 bg-slate-900/90 text-gray-300 font-bold text-[10px] px-2 py-0.5 rounded border border-white/10">
+                  <span className="absolute top-2 right-2 bg-white text-[#202124] font-bold text-[10px] px-2 py-0.5 rounded-full border border-[#E8EAED]">
                     {deal.store}
                   </span>
                 </div>
 
                 <div>
-                  <span className="text-[10px] font-bold text-rose-400 uppercase tracking-widest">{deal.category}</span>
-                  <h3 className="text-sm font-bold text-white line-clamp-2 mt-0.5">{deal.title}</h3>
-                  <p className="text-xs text-gray-400 mt-1">{deal.description}</p>
+                  <span className="text-[10px] font-bold text-[#1A73E8] uppercase tracking-widest">{deal.category}</span>
+                  <h3 className="text-sm font-bold text-[#202124] line-clamp-2 mt-0.5">{deal.title}</h3>
+                  <p className="text-xs text-[#5F6368] mt-1">{deal.description}</p>
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-white/10 flex items-center justify-between">
+              <div className="pt-3 border-t border-[#E8EAED] flex items-center justify-between">
                 <div>
-                  <span className="text-lg font-extrabold text-emerald-400 font-heading">
+                  <span className="text-lg font-bold text-[#188038]">
                     ₹{deal.dealPrice.toLocaleString('en-IN')}
                   </span>
-                  <span className="text-xs text-gray-500 line-through ml-2">
+                  <span className="text-xs text-[#5F6368] line-through ml-1.5">
                     ₹{deal.originalPrice.toLocaleString('en-IN')}
                   </span>
                 </div>
@@ -109,9 +109,9 @@ export const DealsHub: React.FC<DealsHubProps> = ({
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => onTrackAffiliateClick(deal.id, deal.store)}
-                  className="glow-btn-emerald px-3 py-1.5 text-xs font-bold"
+                  className="btn-primary text-xs font-semibold py-2 px-3"
                 >
-                  Claim Deal ↗
+                  Claim Deal <ExternalLink size={12} />
                 </a>
               </div>
             </div>
@@ -120,22 +120,22 @@ export const DealsHub: React.FC<DealsHubProps> = ({
       </div>
 
       {/* Section 2: Verified Coupons */}
-      <div className="space-y-4 pt-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <h2 className="text-lg font-extrabold text-white flex items-center gap-2 font-heading">
-            <Tag className="text-indigo-400" size={20} /> Active Verified Coupon Codes
+      <div className="space-y-4 pt-4 border-t border-[#E8EAED]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <h2 className="text-xl sm:text-2xl font-bold text-[#202124] flex items-center gap-2">
+            <Tag className="text-[#1A73E8]" size={20} /> Verified Store Coupon Codes
           </h2>
 
-          <div className="flex items-center gap-2 text-xs font-semibold">
-            <span className="text-gray-400">Filter Store:</span>
-            {['All', 'Amazon', 'Flipkart', 'Croma'].map(st => (
+          {/* Store Filters */}
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
+            {['All', 'Amazon', 'Flipkart', 'Croma', 'Reliance Digital'].map(st => (
               <button
                 key={st}
                 onClick={() => setSelectedStoreFilter(st)}
-                className={`px-3 py-1 rounded-lg border transition-all ${
+                className={`px-3 py-1 text-xs font-semibold rounded-full border transition-all ${
                   selectedStoreFilter === st
-                    ? 'bg-indigo-600 text-white border-indigo-400'
-                    : 'bg-slate-900 text-gray-400 border-white/10 hover:text-white'
+                    ? 'bg-[#1A73E8] text-white border-[#1A73E8]'
+                    : 'bg-white text-[#5F6368] border-[#E8EAED] hover:bg-[#F8F9FA]'
                 }`}
               >
                 {st}
@@ -144,41 +144,38 @@ export const DealsHub: React.FC<DealsHubProps> = ({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {filteredCoupons.map(coup => (
-            <div 
-              key={coup.id}
-              className="bg-slate-900/90 border border-white/10 rounded-2xl p-5 space-y-4 relative overflow-hidden"
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          {filteredCoupons.map(coupon => (
+            <div
+              key={coupon.id}
+              className="material-card p-5 border border-[#E8EAED] bg-white rounded-2xl flex flex-col justify-between space-y-3"
             >
               <div className="flex items-start justify-between">
                 <div>
-                  <span className="text-[10px] font-extrabold bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded border border-indigo-500/30 uppercase">
-                    {coup.store}
+                  <span className="text-[10px] font-bold bg-[#E8F0FE] text-[#1A73E8] px-2 py-0.5 rounded-full">
+                    {coupon.store}
                   </span>
-                  <h3 className="text-base font-extrabold text-emerald-400 mt-2">{coup.discountText}</h3>
+                  <h3 className="text-base font-bold text-[#202124] mt-2">{coupon.discountText}</h3>
+                  <p className="text-xs text-[#5F6368] mt-1">{coupon.description}</p>
                 </div>
-                <Percent size={24} className="text-indigo-400/40" />
               </div>
 
-              <p className="text-xs text-gray-300">{coup.description}</p>
+              <div className="pt-3 border-t border-[#E8EAED] flex items-center justify-between">
+                <div className="bg-[#F8F9FA] px-3 py-1.5 rounded-xl border border-dashed border-[#BDC1C6] font-mono text-xs font-bold text-[#202124]">
+                  {coupon.code}
+                </div>
 
-              <div className="flex items-center justify-between text-[11px] text-gray-400 pt-2 border-t border-white/5">
-                <span>Min Spend: {coup.minSpend || 'N/A'}</span>
-                <span>Expires: {coup.expiresAt}</span>
-              </div>
-
-              {/* Coupon Code Copy Container */}
-              <div className="bg-slate-950 p-2.5 rounded-xl border border-dashed border-indigo-500/40 flex items-center justify-between">
-                <span className="font-mono font-bold text-sm text-indigo-300 tracking-wider">
-                  {coup.code}
-                </span>
                 <button
-                  onClick={() => handleCopyCode(coup.id, coup.code)}
-                  className="glow-btn px-3 py-1 text-xs font-bold"
+                  onClick={() => handleCopyCode(coupon.id, coupon.code)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all flex items-center gap-1 ${
+                    copiedCouponId === coupon.id
+                      ? 'bg-[#E6F4EA] text-[#188038] border border-[#CEEAD6]'
+                      : 'btn-secondary'
+                  }`}
                 >
-                  {copiedCouponId === coup.id ? (
+                  {copiedCouponId === coupon.id ? (
                     <>
-                      <Check size={14} className="text-emerald-400" /> Copied!
+                      <Check size={14} /> Copied!
                     </>
                   ) : (
                     <>

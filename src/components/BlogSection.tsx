@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BookOpen, Clock, User, ArrowRight, Tag, Share2, ArrowLeft, Sparkles, ExternalLink } from 'lucide-react';
+import { BookOpen, Clock, User, ArrowRight, ArrowLeft } from 'lucide-react';
 import { BlogPost, Product } from '../types';
 
 interface BlogSectionProps {
@@ -19,25 +19,25 @@ export const BlogSection: React.FC<BlogSectionProps> = ({
     const relatedProd = products.find(p => p.id === selectedPost.relatedProductId);
 
     return (
-      <div className="max-w-4xl mx-auto space-y-8 animate-fadeIn">
+      <div className="max-w-4xl mx-auto space-y-6 animate-fadeIn">
         <button
           onClick={() => setSelectedPost(null)}
-          className="inline-flex items-center gap-2 text-xs font-bold text-indigo-400 hover:text-indigo-300 bg-slate-900 px-4 py-2 rounded-xl border border-white/10"
+          className="inline-flex items-center gap-2 text-xs font-bold text-[#1A73E8] bg-white px-4 py-2 rounded-full border border-[#E8EAED] hover:bg-[#F8F9FA]"
         >
           <ArrowLeft size={16} /> Back to All Buying Guides
         </button>
 
         {/* Article Container */}
-        <div className="bg-slate-900/90 rounded-3xl border border-white/10 p-6 md:p-10 space-y-6">
+        <div className="bg-white rounded-3xl border border-[#E8EAED] p-6 md:p-10 space-y-6 shadow-xs">
           <div className="space-y-3">
-            <span className="badge-tag badge-indigo">{selectedPost.category}</span>
-            <h1 className="text-2xl md:text-4xl font-extrabold text-white leading-tight font-heading">
+            <span className="badge-discount">{selectedPost.category}</span>
+            <h1 className="text-2xl md:text-4xl font-bold text-[#202124] leading-tight">
               {selectedPost.title}
             </h1>
 
-            <div className="flex flex-wrap items-center gap-4 text-xs text-gray-400 border-b border-white/10 pb-4">
-              <span className="flex items-center gap-1 text-white font-semibold">
-                <User size={14} className="text-indigo-400" /> {selectedPost.author} ({selectedPost.authorRole})
+            <div className="flex flex-wrap items-center gap-4 text-xs text-[#5F6368] border-b border-[#E8EAED] pb-4">
+              <span className="flex items-center gap-1 font-semibold text-[#202124]">
+                <User size={14} className="text-[#1A73E8]" /> {selectedPost.author} ({selectedPost.authorRole})
               </span>
               <span>•</span>
               <span className="flex items-center gap-1">
@@ -48,30 +48,30 @@ export const BlogSection: React.FC<BlogSectionProps> = ({
             </div>
           </div>
 
-          <div className="h-72 sm:h-96 rounded-2xl overflow-hidden border border-white/10 relative">
+          <div className="h-64 sm:h-96 rounded-2xl overflow-hidden border border-[#E8EAED] relative bg-[#F8F9FA]">
             <img src={selectedPost.image} alt={selectedPost.title} className="w-full h-full object-cover" />
           </div>
 
-          {/* Article Body Content */}
-          <div className="prose prose-invert max-w-none text-gray-300 text-sm leading-relaxed space-y-4 whitespace-pre-line">
+          {/* Article Content */}
+          <div className="text-[#202124] text-xs sm:text-sm leading-relaxed space-y-4 whitespace-pre-line bg-[#F8F9FA] p-5 rounded-2xl border border-[#E8EAED]">
             {selectedPost.content}
           </div>
 
           {/* Embedded Related Product Box */}
           {relatedProd && (
-            <div className="bg-gradient-to-r from-indigo-950/80 to-slate-900 border border-indigo-500/40 rounded-2xl p-5 mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="bg-[#E8F0FE] border border-[#1A73E8]/30 rounded-2xl p-5 mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-4">
-                <img src={relatedProd.mainImage} alt={relatedProd.title} className="w-16 h-16 object-contain bg-slate-950 p-2 rounded-xl border border-white/10" />
+                <img src={relatedProd.mainImage} alt={relatedProd.title} className="w-16 h-16 object-contain bg-white p-2 rounded-xl border border-[#E8EAED]" />
                 <div>
-                  <span className="text-[10px] font-bold text-emerald-400 uppercase">Featured In This Article</span>
-                  <h4 className="text-sm font-bold text-white line-clamp-1">{relatedProd.title}</h4>
-                  <span className="text-base font-extrabold text-emerald-400 font-heading">₹{relatedProd.bestPrice.toLocaleString('en-IN')}</span>
+                  <span className="text-[10px] font-bold text-[#188038] uppercase">Featured In This Article</span>
+                  <h4 className="text-sm font-bold text-[#202124] line-clamp-1">{relatedProd.title}</h4>
+                  <span className="text-base font-bold text-[#188038]">₹{relatedProd.bestPrice.toLocaleString('en-IN')}</span>
                 </div>
               </div>
 
               <button
                 onClick={() => onOpenProduct(relatedProd)}
-                className="glow-btn px-4 py-2 text-xs font-bold shrink-0"
+                className="btn-primary px-4 py-2 text-xs font-bold shrink-0 rounded-full"
               >
                 Compare Prices ↗
               </button>
@@ -79,10 +79,10 @@ export const BlogSection: React.FC<BlogSectionProps> = ({
           )}
 
           {/* Article Tags */}
-          <div className="flex flex-wrap items-center gap-2 pt-4 border-t border-white/10">
-            <span className="text-xs font-bold text-gray-400">Tags:</span>
+          <div className="flex flex-wrap items-center gap-2 pt-4 border-t border-[#E8EAED]">
+            <span className="text-xs font-bold text-[#5F6368]">Tags:</span>
             {selectedPost.tags.map((tag, i) => (
-              <span key={i} className="text-[11px] bg-slate-950 text-indigo-300 px-3 py-1 rounded-lg border border-white/5">
+              <span key={i} className="text-[11px] bg-[#F8F9FA] text-[#1A73E8] px-3 py-1 rounded-full border border-[#E8EAED]">
                 #{tag}
               </span>
             ))}
@@ -94,51 +94,51 @@ export const BlogSection: React.FC<BlogSectionProps> = ({
 
   return (
     <div className="space-y-8">
-      <div className="bg-slate-900/80 p-6 rounded-2xl border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-white p-6 rounded-3xl border border-[#E8EAED] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <BookOpen className="text-emerald-400" size={20} />
-            <h1 className="text-2xl font-extrabold text-white">Buying Guides & Tech Reviews</h1>
+            <BookOpen className="text-[#1A73E8]" size={20} />
+            <h1 className="text-2xl font-bold text-[#202124]">Buying Guides & Tech Reviews</h1>
           </div>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-[#5F6368]">
             In-depth comparisons, camera tests, and buying advice written by tech analysts to help you make informed decisions.
           </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {posts.map(post => (
           <div
             key={post.id}
             onClick={() => setSelectedPost(post)}
-            className="glass-card overflow-hidden cursor-pointer border border-white/10 hover:border-indigo-500/40 bg-slate-900/90 flex flex-col justify-between"
+            className="material-card overflow-hidden cursor-pointer border border-[#E8EAED] bg-white flex flex-col justify-between rounded-2xl"
           >
             <div>
-              <div className="h-48 overflow-hidden relative">
-                <img src={post.image} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                <span className="absolute top-3 left-3 badge-tag badge-indigo shadow">
+              <div className="h-48 overflow-hidden relative bg-[#F8F9FA]">
+                <img src={post.image} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                <span className="absolute top-3 left-3 badge-discount">
                   {post.category}
                 </span>
               </div>
 
               <div className="p-6 space-y-3">
-                <div className="flex items-center gap-3 text-xs text-gray-400">
+                <div className="flex items-center gap-3 text-xs text-[#5F6368]">
                   <span>{post.author}</span>
                   <span>•</span>
                   <span className="flex items-center gap-1"><Clock size={12} /> {post.readTime}</span>
                 </div>
 
-                <h3 className="text-lg font-bold text-white hover:text-indigo-300 transition-colors">
+                <h3 className="text-lg font-bold text-[#202124] hover:text-[#1A73E8] transition-colors">
                   {post.title}
                 </h3>
 
-                <p className="text-xs text-gray-300 line-clamp-2 leading-relaxed">
+                <p className="text-xs text-[#5F6368] line-clamp-2 leading-relaxed">
                   {post.summary}
                 </p>
               </div>
             </div>
 
-            <div className="p-6 pt-0 flex items-center justify-between text-xs font-bold text-indigo-400">
+            <div className="p-6 pt-0 flex items-center justify-between text-xs font-bold text-[#1A73E8]">
               <span>Read Full Article</span>
               <ArrowRight size={16} />
             </div>
