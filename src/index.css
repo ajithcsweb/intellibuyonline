@@ -3,17 +3,19 @@
 :root {
   --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 
-  /* Material 3 / Clean Tech Design System Tokens */
-  --color-primary: #1A73E8;
-  --color-primary-dark: #1557B0;
-  --color-bg: #F8F9FA;
-  --color-surface: #FFFFFF;
-  --color-text-primary: #202124;
-  --color-text-secondary: #5F6368;
-  --color-border: #E8EAED;
-  --color-success: #188038;
-  --color-warning: #F9AB00;
-  --color-error: #D93025;
+  /* eMarket Theme Design System Tokens */
+  --color-primary: #E52E2E;          /* Coral Red CTA & Highlights */
+  --color-primary-dark: #C62828;     /* Darker Red Hover */
+  --color-header-navy: #1E2530;      /* Deep Navy Top/Nav Bar */
+  --color-header-dark: #161C24;      /* Darker Navy Section Labels */
+  --color-bg: #F4F5F7;               /* Off-white Body Background */
+  --color-surface: #FFFFFF;          /* Pure White Cards */
+  --color-text-primary: #202124;     /* Main Text */
+  --color-text-secondary: #5F6368;   /* Muted Subtext */
+  --color-border: #E5E7EB;           /* Card Borders */
+  --color-success: #188038;          /* Green Savings & In-Stock */
+  --color-warning: #F59E0B;          /* Rating Yellow Star */
+  --color-error: #E52E2E;            /* Sale & Discount Red */
 }
 
 html {
@@ -41,14 +43,14 @@ body {
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #F8F9FA;
+  background: #F4F5F7;
 }
 ::-webkit-scrollbar-thumb {
-  background: #DADCE0;
+  background: #CBD5E1;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #BDC1C6;
+  background: #94A3B8;
 }
 
 .no-scrollbar::-webkit-scrollbar {
@@ -59,56 +61,56 @@ body {
   scrollbar-width: none;
 }
 
-/* Material 3 Surface & Card Utilities */
+/* eMarket Style Card Surfaces */
 .material-card {
   background-color: #FFFFFF;
-  border: 1px solid #E8EAED;
-  border-radius: 16px;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 1px 2px rgba(60, 64, 67, 0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .material-card:hover {
-  border-color: #DADCE0;
+  border-color: #CBD5E1;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(60, 64, 67, 0.12);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
 .material-card-elevated {
   background-color: #FFFFFF;
-  border: 1px solid #E8EAED;
-  border-radius: 20px;
-  box-shadow: 0 2px 6px rgba(60, 64, 67, 0.08);
+  border: 1px solid #E5E7EB;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 /* Buttons */
 .btn-primary {
-  background-color: #1A73E8;
+  background-color: #E52E2E;
   color: #FFFFFF !important;
-  font-weight: 600;
-  border-radius: 9999px;
-  padding: 0.625rem 1.35rem;
+  font-weight: 700;
+  border-radius: 6px;
+  padding: 0.6rem 1.25rem;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 3px rgba(26, 115, 232, 0.25);
+  box-shadow: 0 2px 4px rgba(229, 46, 46, 0.25);
   min-height: 40px;
 }
 
 .btn-primary:hover {
-  background-color: #1557B0;
-  box-shadow: 0 3px 8px rgba(26, 115, 232, 0.35);
+  background-color: #C62828;
+  box-shadow: 0 4px 10px rgba(229, 46, 46, 0.35);
   transform: translateY(-1px);
 }
 
 .btn-secondary {
   background-color: #FFFFFF;
   color: #202124 !important;
-  border: 1px solid #DADCE0;
+  border: 1px solid #D1D5DB;
   font-weight: 600;
-  border-radius: 9999px;
-  padding: 0.625rem 1.35rem;
+  border-radius: 6px;
+  padding: 0.6rem 1.25rem;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -117,59 +119,74 @@ body {
 }
 
 .btn-secondary:hover {
-  background-color: #F8F9FA;
-  border-color: #BDC1C6;
+  background-color: #F9FAFB;
+  border-color: #9CA3AF;
 }
 
-/* Savings & Discount Badges */
+/* Circular Red Sale Badges (eMarket Style) */
+.badge-discount-circle {
+  background-color: #E52E2E;
+  color: #FFFFFF;
+  font-weight: 800;
+  font-size: 0.7rem;
+  width: 38px;
+  height: 38px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-center: center;
+  box-shadow: 0 2px 6px rgba(229, 46, 46, 0.3);
+}
+
 .badge-discount {
-  background-color: #E6F4EA;
-  color: #188038;
+  background-color: #FEF2F2;
+  color: #E52E2E;
   font-weight: 700;
   font-size: 0.75rem;
   padding: 0.25rem 0.6rem;
-  border-radius: 9999px;
+  border-radius: 4px;
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
+  border: 1px solid #FCA5A5;
 }
 
 .badge-best-price {
-  background-color: #188038;
+  background-color: #E52E2E;
   color: #FFFFFF;
-  font-weight: 700;
+  font-weight: 800;
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   padding: 0.2rem 0.55rem;
-  border-radius: 6px;
+  border-radius: 4px;
 }
 
 /* Backward compatibility helpers */
 .glass-panel {
   background: #FFFFFF;
-  border: 1px solid #E8EAED;
+  border: 1px solid #E5E7EB;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .glass-card {
   background: #FFFFFF;
-  border: 1px solid #E8EAED;
-  border-radius: 16px;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .glass-card:hover {
-  border-color: #1A73E8;
-  box-shadow: 0 4px 12px rgba(26, 115, 232, 0.12);
+  border-color: #E52E2E;
+  box-shadow: 0 4px 12px rgba(229, 46, 46, 0.12);
 }
 
 .glow-btn {
-  background-color: #1A73E8;
+  background-color: #E52E2E;
   color: white !important;
-  font-weight: 600;
-  border-radius: 9999px;
-  padding: 0.625rem 1.25rem;
+  font-weight: 700;
+  border-radius: 6px;
+  padding: 0.6rem 1.25rem;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -178,5 +195,5 @@ body {
 }
 
 .glow-btn:hover {
-  background-color: #1557B0;
+  background-color: #C62828;
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, ArrowRight, TrendingDown, ShieldCheck, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Search, ArrowRight, TrendingDown, ShieldCheck, Sparkles, CheckCircle2, ChevronRight, Zap, Flame, Gift } from 'lucide-react';
 import { Product } from '../types';
 
 interface HeroBannerProps {
@@ -20,79 +20,110 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
   setSearchQuery
 }) => {
   return (
-    <div className="relative overflow-hidden rounded-3xl bg-white border border-[#E8EAED] p-6 sm:p-10 lg:p-12 mb-10 shadow-xs">
-      {/* Background Subtle Tech Gradient */}
-      <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-[#E8F0FE]/50 to-transparent pointer-events-none" />
-
-      <div className="relative z-10 max-w-4xl mx-auto text-center space-y-6">
+    <div className="space-y-6 mb-8">
+      {/* MAIN HERO GRID: Center Promo Carousel + Right Stacked Banners */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        {/* Brand Tagline Chip */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#E8F0FE] text-[#1A73E8] text-xs font-bold uppercase tracking-wider">
-          <Sparkles size={14} className="text-[#1A73E8]" />
-          <span>India's Premier Tech Price Engine</span>
-        </div>
+        {/* CENTER MAIN PROMOTIONAL BANNER */}
+        <div className="lg:col-span-2 relative overflow-hidden rounded-xl bg-gradient-to-r from-[#FFF5F5] via-[#FFF0F0] to-[#E8F0FE] border border-[#E5E7EB] p-6 sm:p-10 flex flex-col justify-between shadow-xs min-h-[320px]">
+          <div className="relative z-10 max-w-lg space-y-4">
+            <span className="bg-[#E52E2E] text-white font-black text-[10px] uppercase px-2.5 py-1 rounded tracking-wider inline-flex items-center gap-1">
+              <Flame size={12} /> TECH SUPER SALE UP TO 50% OFF
+            </span>
 
-        {/* Main Headline */}
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#202124] tracking-tight leading-tight">
-          Find the best tech deal.
-        </h1>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#1E2530] tracking-tight leading-tight">
+              Find the best tech deal. <br />
+              <span className="text-[#E52E2E]">Compare before you buy.</span>
+            </h1>
 
-        {/* Supporting text */}
-        <p className="text-base sm:text-lg text-[#5F6368] font-normal max-w-2xl mx-auto leading-relaxed">
-          Compare prices, track price history, and buy smarter across Amazon, Flipkart, Croma, and Reliance Digital.
-        </p>
+            <p className="text-xs sm:text-sm text-[#5F6368] font-medium leading-relaxed">
+              Track 6-month historical price graphs and compare live store prices across Amazon, Flipkart, Croma & Reliance Digital.
+            </p>
 
-        {/* Hero Large Search Bar */}
-        <div className="max-w-2xl mx-auto pt-2">
-          <div className="relative flex items-center shadow-sm">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#5F6368] w-5 h-5" />
-            <input
-              type="text"
-              placeholder="Search phones, laptops, headphones, gadgets..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#F8F9FA] text-[#202124] text-sm sm:text-base rounded-full pl-12 pr-32 py-3.5 sm:py-4 border border-[#E8EAED] focus:border-[#1A73E8] focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#1A73E8]/15 transition-all placeholder:text-[#5F6368]"
+            <div className="pt-2 flex flex-wrap items-center gap-3">
+              <button
+                onClick={onExploreDeals}
+                className="btn-primary text-xs sm:text-sm font-bold px-6 py-3 rounded-md shadow-md"
+              >
+                <span>Shop Today's Flash Deals</span>
+                <ArrowRight size={16} />
+              </button>
+
+              <button
+                onClick={onOpenCompare}
+                className="btn-secondary text-xs sm:text-sm font-bold px-5 py-3 rounded-md"
+              >
+                <span>Compare Products</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Banner Graphic Asset */}
+          <div className="hidden sm:block absolute right-4 bottom-4 w-60 h-60 opacity-90 pointer-events-none">
+            <img
+              src={featuredProduct.mainImage || 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=600&q=80'}
+              alt="Featured Hero Product"
+              className="w-full h-full object-contain filter drop-shadow-xl"
             />
-            <button
-              onClick={onExploreDeals}
-              className="absolute right-2 top-1/2 -translate-y-1/2 btn-primary text-xs sm:text-sm font-semibold px-4 py-2 sm:py-2.5 rounded-full"
-            >
-              Search
-            </button>
           </div>
         </div>
 
-        {/* Primary & Secondary CTAs */}
-        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 pt-2">
-          <button
-            onClick={onExploreDeals}
-            className="btn-primary text-sm sm:text-base font-semibold px-6 py-3"
-          >
-            <span>Explore Best Deals</span>
-            <ArrowRight size={18} />
-          </button>
+        {/* RIGHT STACKED PROMO CARDS (eMarket Style) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
+          
+          {/* Card 1 */}
+          <div className="bg-white p-5 rounded-xl border border-[#E5E7EB] shadow-xs flex items-center justify-between gap-4 hover:border-[#E52E2E] transition-all">
+            <div className="space-y-1">
+              <span className="text-[10px] font-bold text-[#E52E2E] uppercase tracking-wider">SMARTPHONES DEALS</span>
+              <h3 className="text-sm font-bold text-[#1E2530]">Flagship Mobiles</h3>
+              <p className="text-[11px] text-gray-500 font-medium">Flat 25% Off on iPhones & Galaxy</p>
+              <button onClick={onExploreDeals} className="text-xs font-bold text-[#E52E2E] hover:underline pt-1 inline-flex items-center gap-1">
+                Explore Deals <ChevronRight size={14} />
+              </button>
+            </div>
+            <img
+              src="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=150&q=80"
+              alt=""
+              className="w-20 h-20 object-contain shrink-0"
+            />
+          </div>
 
-          <button
-            onClick={onOpenCompare}
-            className="btn-secondary text-sm sm:text-base font-semibold px-6 py-3"
-          >
-            <span>Compare Products</span>
-          </button>
+          {/* Card 2 */}
+          <div className="bg-white p-5 rounded-xl border border-[#E5E7EB] shadow-xs flex items-center justify-between gap-4 hover:border-[#E52E2E] transition-all">
+            <div className="space-y-1">
+              <span className="text-[10px] font-bold text-[#3B82F6] uppercase tracking-wider">LAPTOPS & MONITORS</span>
+              <h3 className="text-sm font-bold text-[#1E2530]">Workstation PCs</h3>
+              <p className="text-[11px] text-gray-500 font-medium">Extra ₹5,000 Exchange Bonus</p>
+              <button onClick={onExploreDeals} className="text-xs font-bold text-[#3B82F6] hover:underline pt-1 inline-flex items-center gap-1">
+                View Laptop Offers <ChevronRight size={14} />
+              </button>
+            </div>
+            <img
+              src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=150&q=80"
+              alt=""
+              className="w-20 h-20 object-contain shrink-0"
+            />
+          </div>
+
         </div>
 
-        {/* Trust Badges */}
-        <div className="flex flex-wrap items-center justify-center gap-6 pt-6 text-xs text-[#5F6368] font-medium border-t border-[#E8EAED]/60 max-w-xl mx-auto">
-          <div className="flex items-center gap-1.5">
-            <CheckCircle2 size={16} className="text-[#188038]" /> 100% Free & Transparent
-          </div>
-          <div className="flex items-center gap-1.5">
-            <TrendingDown size={16} className="text-[#188038]" /> 6-Month Price Graphs
-          </div>
-          <div className="flex items-center gap-1.5">
-            <ShieldCheck size={16} className="text-[#1A73E8]" /> Verified Coupon Offers
-          </div>
+      </div>
+
+      {/* FULL-WIDTH PROMO STRIP BAR (eMarket Style Coupon Banner) */}
+      <div className="bg-[#E52E2E] text-white p-3.5 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm">
+        <div className="flex items-center gap-3 text-xs font-bold text-center sm:text-left">
+          <span className="bg-white text-[#E52E2E] px-2.5 py-1 rounded font-black text-[11px] flex items-center gap-1 shrink-0">
+            <Gift size={14} /> GIFT SPECIAL
+          </span>
+          <span>Wrap new offers / bank discount every weekend - New Coupon code: <strong>HAPPY2026</strong></span>
         </div>
 
+        <button 
+          onClick={onExploreDeals}
+          className="bg-white hover:bg-gray-100 text-[#E52E2E] text-xs font-black px-4 py-1.5 rounded transition-colors shrink-0"
+        >
+          Get Coupon
+        </button>
       </div>
     </div>
   );

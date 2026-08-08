@@ -1,71 +1,61 @@
 import React from 'react';
-import { Search, GitCompare, ShoppingBag, ArrowRight } from 'lucide-react';
+import { Truck, ShieldCheck, Gift, RefreshCw, ArrowRight } from 'lucide-react';
 
 interface HowItWorksProps {
   onExploreClick: () => void;
 }
 
 export const HowItWorks: React.FC<HowItWorksProps> = ({ onExploreClick }) => {
-  const steps = [
-    {
-      number: '01',
-      title: 'Search',
-      description: 'Find the exact phone, laptop, or gadget you are looking for in seconds.',
-      icon: Search
-    },
-    {
-      number: '02',
-      title: 'Compare',
-      description: 'Compare prices live across Amazon, Flipkart, Croma, and Reliance Digital.',
-      icon: GitCompare
-    },
-    {
-      number: '03',
-      title: 'Buy Smart',
-      description: 'Choose the best verified deal with 6-month price history graphs & bank offers.',
-      icon: ShoppingBag
-    }
-  ];
-
   return (
-    <section className="mb-16">
-      <div className="text-center max-w-2xl mx-auto mb-10">
-        <h2 className="text-2xl sm:text-3xl font-bold text-[#202124] tracking-tight">
-          How IntelliBuy Works
-        </h2>
-        <p className="text-sm text-[#5F6368] mt-2">
-          Three simple steps to make sure you never overpay on tech again.
-        </p>
+    <div className="bg-white rounded-xl border border-[#E5E7EB] p-6 shadow-xs my-8">
+      {/* 4 EMARKET SERVICE GUARANTEE WIDGET CARDS */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 divide-y sm:divide-y-0 sm:divide-x divide-[#E5E7EB]">
+        
+        {/* Card 1 */}
+        <div className="flex items-center gap-4 pt-4 sm:pt-0 sm:px-4">
+          <div className="w-12 h-12 rounded-lg bg-[#FEF2F2] text-[#E52E2E] flex items-center justify-center shrink-0 border border-[#FCA5A5]">
+            <Truck size={24} />
+          </div>
+          <div>
+            <h4 className="text-xs font-black text-[#1E2530] uppercase tracking-wider">FREE DELIVERY & DEALS</h4>
+            <p className="text-[11px] text-gray-500 mt-0.5">On top verified merchant orders</p>
+          </div>
+        </div>
+
+        {/* Card 2 */}
+        <div className="flex items-center gap-4 pt-4 sm:pt-0 sm:px-4">
+          <div className="w-12 h-12 rounded-lg bg-[#FEF2F2] text-[#E52E2E] flex items-center justify-center shrink-0 border border-[#FCA5A5]">
+            <ShieldCheck size={24} />
+          </div>
+          <div>
+            <h4 className="text-xs font-black text-[#1E2530] uppercase tracking-wider">STORE PROTECTION</h4>
+            <p className="text-[11px] text-gray-500 mt-0.5">Verified Indian Retail Partners</p>
+          </div>
+        </div>
+
+        {/* Card 3 */}
+        <div className="flex items-center gap-4 pt-4 sm:pt-0 sm:px-4">
+          <div className="w-12 h-12 rounded-lg bg-[#FEF2F2] text-[#E52E2E] flex items-center justify-center shrink-0 border border-[#FCA5A5]">
+            <Gift size={24} />
+          </div>
+          <div>
+            <h4 className="text-xs font-black text-[#1E2530] uppercase tracking-wider">BANK PROMOTION GIFTS</h4>
+            <p className="text-[11px] text-gray-500 mt-0.5">Special HDFC & ICICI instant offers</p>
+          </div>
+        </div>
+
+        {/* Card 4 */}
+        <div className="flex items-center gap-4 pt-4 sm:pt-0 sm:px-4">
+          <div className="w-12 h-12 rounded-lg bg-[#FEF2F2] text-[#E52E2E] flex items-center justify-center shrink-0 border border-[#FCA5A5]">
+            <RefreshCw size={24} />
+          </div>
+          <div>
+            <h4 className="text-xs font-black text-[#1E2530] uppercase tracking-wider">PRICE DROP GUARANTEE</h4>
+            <p className="text-[11px] text-gray-500 mt-0.5">6-month price drop graph tracking</p>
+          </div>
+        </div>
+
       </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {steps.map((step, idx) => {
-          const IconComp = step.icon;
-
-          return (
-            <div
-              key={idx}
-              className="material-card p-6 sm:p-8 rounded-3xl bg-white border border-[#E8EAED] relative text-center flex flex-col items-center justify-between"
-            >
-              <div className="w-12 h-12 rounded-2xl bg-[#E8F0FE] text-[#1A73E8] flex items-center justify-center mb-4">
-                <IconComp size={24} />
-              </div>
-
-              <span className="text-xs font-bold text-[#1A73E8] uppercase tracking-widest mb-1">
-                STEP {step.number}
-              </span>
-
-              <h3 className="text-xl font-bold text-[#202124] mb-2">
-                {step.title}
-              </h3>
-
-              <p className="text-sm text-[#5F6368] leading-relaxed">
-                {step.description}
-              </p>
-            </div>
-          );
-        })}
-      </div>
-    </section>
+    </div>
   );
 };

@@ -22,54 +22,64 @@ import {
   INITIAL_DEALS, 
   INITIAL_COUPONS, 
   INITIAL_BLOG_POSTS, 
-  INITIAL_AFFILIATE_LOGS, 
-  INITIAL_NOTIFICATIONS, 
-  INITIAL_ADMIN_STATS 
+  INITIAL_NOTIFICATIONS 
 } from './data/mockData';
-import { Product, StoreName, AffiliateClickLog, NotificationItem, Deal, Coupon } from './types';
-import { SlidersHorizontal, ArrowUpDown, Filter, Sparkles, CheckCircle, ExternalLink } from 'lucide-react';
-import { 
-  getProductsService, 
-  getDealsService, 
-  getCouponsService, 
-  insertProductService, 
-  logAffiliateClickService, 
-  getAffiliateLogsService 
-} from './services/supabaseService';
+
+import { Product, NotificationItem } from './types';
+import { getProductsService, getDealsService, getCouponsService, getAffiliateLogsService, insertProductService } from './services/supabaseService';
 import { getCurrentUser, signOutUser, UserProfile } from './services/authService';
+import { CheckCircle, Star, Flame, Tag, Grid, ArrowRight } from 'lucide-react';
 
 export function App() {
   const [activeTab, setActiveTab] = useState<string>('shop');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
-
-  // User Auth State
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
-  const [isProfileSettingsOpen, setIsProfileSettingsOpen] = useState<boolean>(false);
-  const [authModalTab, setAuthModalTab] = useState<'login' | 'register' | 'forgot'>('login');
-
-  // Filters State
   const [selectedStoreFilter, setSelectedStoreFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'featured' | 'price_low' | 'price_high' | 'discount' | 'rating'>('featured');
   const [onlyDeals, setOnlyDeals] = useState<boolean>(false);
 
-  // Products & User Data State
+  // App Data State
   const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
-  const [deals, setDeals] = useState<Deal[]>(INITIAL_DEALS);
-  const [coupons, setCoupons] = useState<Coupon[]>(INITIAL_COUPONS);
-  const [wishlistIds, setWishlistIds] = useState<string[]>(['prod-1']);
-  const [comparedProducts, setComparedProducts] = useState<Product[]>([INITIAL_PRODUCTS[0], INITIAL_PRODUCTS[1]]);
+  const [deals, setDeals] = useState(INITIAL_DEALS);
+  const [coupons, setCoupons] = useState(INITIAL_COUPONS);
+  const [affiliateLogs, setAffiliateLogs] = useState<any[]>([]);
+
+  // Selected Detail Modal State
   const [selectedDetailProduct, setSelectedDetailProduct] = useState<Product | null>(null);
 
-  // Notifications & Admin State
+  // Compare & Wishlist State
+  const [wishlistIds, setWishlistIds] = useState<string[]>(['p1', 'p3']);
+  const [comparedProducts, setComparedProducts] = useState<Product[]>([INITIAL_PRODUCTS[0], INITIAL_PRODUCTS[1]]);
+
+  // Notifications State
   const [notifications, setNotifications] = useState<NotificationItem[]>(INITIAL_NOTIFICATIONS);
   const [isNotifOpen, setIsNotifOpen] = useState<boolean>(false);
-  const [affiliateLogs, setAffiliateLogs] = useState<AffiliateClickLog[]>(INITIAL_AFFILIATE_LOGS);
-  const [adminStats, setAdminStats] = useState(INITIAL_ADMIN_STATS);
+
+  // User Auth State
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+  const [authInitialTab, setAuthInitialTab] = useState<'login' | 'register' | 'forgot'>('login');
+
+  // Profile Settings Modal State
+  const [isProfileSettingsOpen, setIsProfileSettingsOpen] = useState<boolean>(false);
+
+  // Admin Stats State
+  const [adminStats, setAdminStats] = useState({
+    totalProducts: 8,
+    totalDeals: 6,
+    totalClicks: 24,
+    estCommission: 2980
+  });
+
+  // Global Toast State
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Load live data & user session from Supabase on mount
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
+
+  // Sync Supabase Data on Load
   useEffect(() => {
     async function loadSupabaseData() {
       const [fetchedProducts, fetchedDeals, fetchedCoupons, fetchedLogs, fetchedUser] = await Promise.all([
@@ -80,121 +90,94 @@ export function App() {
         getCurrentUser()
       ]);
 
-      if (fetchedUser) setUser(fetchedUser);
-
-      if (fetchedProducts && fetchedProducts.length > 0) {
-        setProducts(fetchedProducts);
-        setComparedProducts([fetchedProducts[0], fetchedProducts[1] || fetchedProducts[0]]);
-        setAdminStats(prev => ({ ...prev, totalProducts: fetchedProducts.length }));
-      }
-      if (fetchedDeals && fetchedDeals.length > 0) setDeals(fetchedDeals);
-      if (fetchedCoupons && fetchedCoupons.length > 0) setCoupons(fetchedCoupons);
-      if (fetchedLogs && fetchedLogs.length > 0) {
+      if (fetchedProducts.length > 0) setProducts(fetchedProducts);
+      if (fetchedDeals.length > 0) setDeals(fetchedDeals);
+      if (fetchedCoupons.length > 0) setCoupons(fetchedCoupons);
+      if (fetchedLogs.length > 0) {
         setAffiliateLogs(fetchedLogs);
-        setAdminStats(prev => ({ ...prev, totalAffiliateClicks: fetchedLogs.length }));
+        setAdminStats(prev => ({
+          ...prev,
+          totalClicks: fetchedLogs.length,
+          estCommission: fetchedLogs.reduce((acc: number, curr: any) => acc + (curr.commission_earned || 250), 0)
+        }));
       }
+      if (fetchedUser) setUser(fetchedUser);
     }
+
     loadSupabaseData();
   }, []);
 
+  // Open Auth Modal Helper
   const handleOpenAuth = (tab: 'login' | 'register' | 'forgot' = 'login') => {
-    setAuthModalTab(tab);
+    setAuthInitialTab(tab);
     setIsAuthModalOpen(true);
   };
 
+  // Sign Out Helper
   const handleSignOut = async () => {
     await signOutUser();
     setUser(null);
-    showToast('Signed out successfully.');
+    showToast('Signed out of IntelliBuy');
   };
 
-  const showToast = (msg: string) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3500);
-  };
-
-  // Affiliate Click Tracker
-  const handleTrackAffiliateClick = (productId: string, store: StoreName | string) => {
-    const prod = products.find(p => p.id === productId);
-    const storeObj = prod?.stores.find(s => s.store === store);
-
-    const logEntry: AffiliateClickLog = {
-      id: `log-${Date.now()}`,
-      productId,
-      productTitle: prod ? prod.title : 'Product',
-      store: store as StoreName,
-      timestamp: new Date().toISOString(),
-      commissionEarned: storeObj ? Math.round(storeObj.price * 0.035) : 150,
-      status: 'Clicked',
-      userRegion: 'IN-MH'
-    };
-
-    setAffiliateLogs(prev => [logEntry, ...prev]);
-    setAdminStats(prev => ({
-      ...prev,
-      totalAffiliateClicks: prev.totalAffiliateClicks + 1
-    }));
-
-    // Async log to Supabase
-    logAffiliateClickService(logEntry);
-  };
-
-  // Toggle Wishlist
-  const handleToggleWishlist = (product: Product) => {
+  // Toggle Wishlist Helper
+  const handleToggleWishlist = (productId: string) => {
     setWishlistIds(prev => {
-      const exists = prev.includes(product.id);
+      const exists = prev.includes(productId);
       if (exists) {
-        showToast(`Removed from Wishlist`);
-        return prev.filter(id => id !== product.id);
+        showToast('Removed from wishlist');
+        return prev.filter(id => id !== productId);
       } else {
-        showToast(`Saved ${product.title} to Wishlist`);
-        return [...prev, product.id];
+        showToast('Saved to wishlist');
+        return [...prev, productId];
       }
     });
   };
 
-  // Toggle Compare
+  // Toggle Compare Helper
   const handleToggleCompare = (product: Product) => {
     setComparedProducts(prev => {
       const exists = prev.some(p => p.id === product.id);
       if (exists) {
-        showToast(`Removed from Compare list`);
+        showToast(`Removed ${product.title} from comparison`);
         return prev.filter(p => p.id !== product.id);
       } else {
         if (prev.length >= 4) {
-          showToast(`You can compare up to 4 products simultaneously`);
+          showToast('Comparison limit reached (max 4 products)');
           return prev;
         }
-        showToast(`Added ${product.title} to Compare tray`);
+        showToast(`Added ${product.title} to comparison tray`);
         return [...prev, product];
       }
     });
   };
 
-  // Add Product from Admin
-  const handleAddProduct = (newProdData: Partial<Product>) => {
-    const newProd: Product = {
-      id: `prod-${Date.now()}`,
-      title: newProdData.title || 'New Product',
-      slug: (newProdData.title || 'new-product').toLowerCase().replace(/\s+/g, '-'),
-      brand: newProdData.brand || 'Brand',
-      category: newProdData.category || 'smartphones',
-      subcategory: newProdData.subcategory || 'Standard',
-      mainImage: newProdData.mainImage || '',
-      galleryImages: newProdData.galleryImages || [],
-      bestPrice: newProdData.bestPrice || 9999,
-      originalPrice: newProdData.originalPrice || 11999,
-      discountPercentage: newProdData.discountPercentage || 15,
-      rating: 4.5,
-      reviewCount: 1,
-      stores: newProdData.stores || [],
-      specs: newProdData.specs || {},
-      pros: newProdData.pros || [],
-      cons: newProdData.cons || [],
-      priceHistory: newProdData.priceHistory || [],
-      createdDate: new Date().toISOString().slice(0, 10)
+  // Track Affiliate Clicks
+  const handleTrackAffiliateClick = (productId: string, store: string) => {
+    setAdminStats(prev => ({
+      ...prev,
+      totalClicks: prev.totalClicks + 1,
+      estCommission: prev.estCommission + 320
+    }));
+
+    const prod = products.find(p => p.id === productId);
+    const newLog = {
+      id: `clk-${Date.now()}`,
+      product_id: productId,
+      product_title: prod ? prod.title : 'Tech Device',
+      store,
+      click_timestamp: new Date().toISOString(),
+      commission_earned: 320,
+      status: 'Clicked',
+      user_region: 'India Visitor'
     };
 
+    setAffiliateLogs(prev => [newLog, ...prev]);
+    showToast(`Redirecting to ${store} partner store...`);
+  };
+
+  // Add Product from Admin
+  const handleAddProduct = (newProd: Product) => {
     setProducts(prev => [newProd, ...prev]);
     setAdminStats(prev => ({
       ...prev,
@@ -214,11 +197,9 @@ export function App() {
   // Filtered & Sorted Products List
   const filteredProducts = useMemo(() => {
     return products.filter(product => {
-      // Category filter
       if (selectedCategory !== 'all' && product.category !== selectedCategory) {
         return false;
       }
-      // Search query filter
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
         const matchesTitle = product.title.toLowerCase().includes(q);
@@ -226,12 +207,10 @@ export function App() {
         const matchesCategory = product.category.toLowerCase().includes(q);
         if (!matchesTitle && !matchesBrand && !matchesCategory) return false;
       }
-      // Store filter
       if (selectedStoreFilter !== 'all') {
         const hasStore = product.stores.some(st => st.store.toLowerCase() === selectedStoreFilter.toLowerCase());
         if (!hasStore) return false;
       }
-      // Today deals filter
       if (onlyDeals && !product.isTodayDeal) {
         return false;
       }
@@ -248,17 +227,17 @@ export function App() {
   const unreadNotifCount = notifications.filter(n => !n.read).length;
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] text-[#202124] flex flex-col justify-between selection:bg-[#1A73E8] selection:text-white">
+    <div className="min-h-screen bg-[#F4F5F7] text-[#202124] flex flex-col justify-between selection:bg-[#E52E2E] selection:text-white">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-[#202124] text-white text-xs font-bold px-4 py-3 rounded-2xl shadow-xl flex items-center gap-2">
-          <CheckCircle size={16} className="text-[#188038]" />
+        <div className="fixed bottom-6 right-6 z-50 bg-[#1E2530] text-white text-xs font-bold px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 border border-[#2D3748]">
+          <CheckCircle size={16} className="text-[#E52E2E]" />
           <span>{toastMessage}</span>
         </div>
       )}
 
       <div>
-        {/* Main Header */}
+        {/* Header Component */}
         <Header
           activeTab={activeTab}
           setActiveTab={setActiveTab}
@@ -280,11 +259,11 @@ export function App() {
         />
 
         {/* Main Body View Content */}
-        <main className="max-w-7xl mx-auto px-4 py-8">
+        <main className="max-w-7xl mx-auto px-4 py-6">
           
           {/* HOMEPAGE FLOW & PRODUCTS CATALOG */}
           {(activeTab === 'shop' || activeTab === 'products') && (
-            <div className="space-y-12">
+            <div className="space-y-8">
               
               {/* 1. Hero Section */}
               <HeroBanner
@@ -296,104 +275,145 @@ export function App() {
                 setSearchQuery={setSearchQuery}
               />
 
-              {/* 2. Shop by Category */}
-              <CategoryNav
-                categories={INITIAL_CATEGORIES}
-                selectedCategory={selectedCategory}
-                onSelectCategory={(catId) => {
-                  setSelectedCategory(catId);
-                  setActiveTab('products');
-                }}
-              />
+              {/* 2. Service Guarantees Strip */}
+              <HowItWorks onExploreClick={() => setActiveTab('deals')} />
 
-              {/* 3. Today's Best Deals & Filter Bar */}
-              <section className="space-y-6">
-                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-                  <div>
-                    <h2 className="text-2xl sm:text-3xl font-bold text-[#202124] tracking-tight">
-                      Today's Best Deals
-                    </h2>
-                    <p className="text-sm text-[#5F6368] mt-1">
-                      Hand-picked products worth checking today. Compare prices across stores.
-                    </p>
+              {/* 3. MAIN EMARKET TWO-COLUMN LAYOUT (Left Sidebar Widgets + Right Product Grid) */}
+              <div className="flex flex-col lg:flex-row gap-8 items-start">
+                
+                {/* LEFT SIDEBAR WIDGETS (eMarket Style) */}
+                <aside className="w-full lg:w-64 shrink-0 space-y-6">
+                  
+                  {/* LATEST PRODUCTS MINI LIST WIDGET */}
+                  <div className="bg-white rounded-xl border border-[#E5E7EB] p-4 shadow-xs space-y-3">
+                    <div className="pb-2 border-b border-[#E5E7EB] flex items-center justify-between">
+                      <h3 className="text-xs font-black text-[#1E2530] uppercase tracking-wider">LATEST PRICE DROPS</h3>
+                      <div className="w-2 h-2 rounded-full bg-[#E52E2E]" />
+                    </div>
+
+                    <div className="space-y-3">
+                      {products.slice(0, 4).map(p => (
+                        <div 
+                          key={p.id}
+                          onClick={() => setSelectedDetailProduct(p)}
+                          className="flex items-center gap-3 cursor-pointer hover:bg-[#F8F9FA] p-1.5 rounded-lg transition-colors border border-transparent hover:border-[#E5E7EB]"
+                        >
+                          <img src={p.mainImage} alt="" className="w-12 h-12 object-contain bg-[#F4F5F7] p-1 rounded border border-[#E5E7EB]" />
+                          <div>
+                            <h4 className="text-xs font-bold text-[#1E2530] line-clamp-1 hover:text-[#E52E2E]">{p.title}</h4>
+                            <div className="flex items-center gap-1 text-[10px] text-[#F59E0B]">
+                              <Star size={10} className="fill-[#F59E0B]" />
+                              <span>{p.rating}</span>
+                            </div>
+                            <div className="text-xs font-black text-[#E52E2E]">₹{p.bestPrice.toLocaleString('en-IN')}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
 
-                  {/* Filter Controls Bar */}
-                  <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">
-                    <select
-                      value={selectedStoreFilter}
-                      onChange={(e) => setSelectedStoreFilter(e.target.value)}
-                      aria-label="Filter products by retailer store"
-                      className="bg-white text-[#202124] text-xs font-semibold px-3 py-2 rounded-full border border-[#E8EAED] focus:outline-none focus:border-[#1A73E8] cursor-pointer shadow-xs"
-                    >
-                      <option value="all">All Stores</option>
-                      <option value="Amazon">Amazon</option>
-                      <option value="Flipkart">Flipkart</option>
-                      <option value="Croma">Croma</option>
-                      <option value="Reliance Digital">Reliance Digital</option>
-                    </select>
-
-                    <button
-                      onClick={() => setOnlyDeals(!onlyDeals)}
-                      className={`px-3 py-2 rounded-full border transition-all ${
-                        onlyDeals
-                          ? 'bg-[#188038] text-white border-[#188038]'
-                          : 'bg-white text-[#5F6368] border-[#E8EAED] hover:bg-[#F8F9FA]'
-                      }`}
-                    >
-                      🔥 Deals Only
+                  {/* PROMO POSTER WIDGET */}
+                  <div className="bg-gradient-to-b from-[#1E2530] to-[#161C24] text-white p-5 rounded-xl text-center space-y-3 shadow-md">
+                    <span className="bg-[#E52E2E] text-white text-[10px] font-black uppercase px-2 py-0.5 rounded">EXCLUSIVE DEALS</span>
+                    <h4 className="text-base font-bold">Tech Accessories</h4>
+                    <p className="text-xs text-gray-300">Up to 50% Off on Premium Audio & Chargers</p>
+                    <button onClick={() => setActiveTab('deals')} className="btn-primary text-xs font-bold w-full justify-center py-2">
+                      Shop Deals Now
                     </button>
-
-                    <select
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value as any)}
-                      aria-label="Sort products catalog"
-                      className="bg-white text-[#202124] text-xs font-semibold px-3 py-2 rounded-full border border-[#E8EAED] focus:outline-none focus:border-[#1A73E8] cursor-pointer shadow-xs"
-                    >
-                      <option value="featured">Sort: Featured</option>
-                      <option value="price_low">Price: Low to High</option>
-                      <option value="price_high">Price: High to Low</option>
-                      <option value="discount">Highest Discount %</option>
-                      <option value="rating">Top Rated</option>
-                    </select>
                   </div>
+
+                </aside>
+
+                {/* RIGHT MAIN CATALOG GRID */}
+                <div className="flex-1 space-y-6 w-full">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 rounded-xl border border-[#E5E7EB] shadow-xs">
+                    <div>
+                      <h2 className="text-lg font-black text-[#1E2530] tracking-tight">
+                        TRENDING PRODUCTS
+                      </h2>
+                      <p className="text-xs text-[#5F6368]">
+                        Compare prices across Amazon, Flipkart, Croma, and Reliance Digital.
+                      </p>
+                    </div>
+
+                    {/* Filter Controls Bar */}
+                    <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">
+                      <select
+                        value={selectedStoreFilter}
+                        onChange={(e) => setSelectedStoreFilter(e.target.value)}
+                        aria-label="Filter products by retailer store"
+                        className="bg-[#F8F9FA] text-[#1E2530] text-xs font-bold px-3 py-2 rounded-md border border-[#E5E7EB] focus:outline-none cursor-pointer"
+                      >
+                        <option value="all">All Stores</option>
+                        <option value="Amazon">Amazon</option>
+                        <option value="Flipkart">Flipkart</option>
+                        <option value="Croma">Croma</option>
+                        <option value="Reliance Digital">Reliance Digital</option>
+                      </select>
+
+                      <button
+                        onClick={() => setOnlyDeals(!onlyDeals)}
+                        className={`px-3 py-2 rounded-md border transition-all text-xs font-bold ${
+                          onlyDeals
+                            ? 'bg-[#E52E2E] text-white border-[#E52E2E]'
+                            : 'bg-[#F8F9FA] text-[#5F6368] border-[#E5E7EB] hover:bg-gray-100'
+                        }`}
+                      >
+                        🔥 Deals Only
+                      </button>
+
+                      <select
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value as any)}
+                        aria-label="Sort products catalog"
+                        className="bg-[#F8F9FA] text-[#1E2530] text-xs font-bold px-3 py-2 rounded-md border border-[#E5E7EB] focus:outline-none cursor-pointer"
+                      >
+                        <option value="featured">Sort: Featured</option>
+                        <option value="price_low">Price: Low to High</option>
+                        <option value="price_high">Price: High to Low</option>
+                        <option value="discount">Highest Discount %</option>
+                        <option value="rating">Top Rated</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Product Grid (3 cols on desktop, 2 on tablet/mobile) */}
+                  {filteredProducts.length > 0 ? (
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+                      {filteredProducts.map(product => (
+                        <ProductCard
+                          key={product.id}
+                          product={product}
+                          onOpenDetail={(p) => setSelectedDetailProduct(p)}
+                          onToggleWishlist={handleToggleWishlist}
+                          isWishlisted={wishlistIds.includes(product.id)}
+                          onToggleCompare={handleToggleCompare}
+                          isCompared={comparedProducts.some(cp => cp.id === product.id)}
+                          onTrackAffiliateClick={handleTrackAffiliateClick}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-16 bg-white rounded-xl border border-[#E5E7EB] space-y-3">
+                      <p className="text-[#5F6368] text-sm font-medium">No products found matching your active filters.</p>
+                      <button
+                        onClick={() => {
+                          setSelectedCategory('all');
+                          setSearchQuery('');
+                          setSelectedStoreFilter('all');
+                          setOnlyDeals(false);
+                        }}
+                        className="btn-primary text-xs font-bold px-4 py-2"
+                      >
+                        Reset All Filters
+                      </button>
+                    </div>
+                  )}
                 </div>
 
-                {/* Product Grid (4 desktop, 3 tablet, 2 mobile) */}
-                {filteredProducts.length > 0 ? (
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-                    {filteredProducts.map(product => (
-                      <ProductCard
-                        key={product.id}
-                        product={product}
-                        onOpenDetail={(p) => setSelectedDetailProduct(p)}
-                        onToggleWishlist={handleToggleWishlist}
-                        isWishlisted={wishlistIds.includes(product.id)}
-                        onToggleCompare={handleToggleCompare}
-                        isCompared={comparedProducts.some(cp => cp.id === product.id)}
-                        onTrackAffiliateClick={handleTrackAffiliateClick}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-16 bg-white rounded-3xl border border-[#E8EAED] space-y-3">
-                    <p className="text-[#5F6368] text-sm">No products found matching your active filters.</p>
-                    <button
-                      onClick={() => {
-                        setSelectedCategory('all');
-                        setSearchQuery('');
-                        setSelectedStoreFilter('all');
-                        setOnlyDeals(false);
-                      }}
-                      className="btn-primary text-xs font-bold px-4 py-2"
-                    >
-                      Reset All Filters
-                    </button>
-                  </div>
-                )}
-              </section>
+              </div>
 
-              {/* 4. Price History Component */}
+              {/* 4. Price History Section */}
               <PriceHistorySection
                 products={products}
                 onOpenProduct={(p) => setSelectedDetailProduct(p)}
@@ -404,11 +424,6 @@ export function App() {
                 products={products}
                 onOpenProduct={(p) => setSelectedDetailProduct(p)}
                 onTrackAffiliateClick={handleTrackAffiliateClick}
-              />
-
-              {/* 6. How IntelliBuy Works */}
-              <HowItWorks
-                onExploreClick={() => setActiveTab('deals')}
               />
 
             </div>
@@ -492,11 +507,21 @@ export function App() {
         />
       )}
 
-      {/* Auth Modal */}
+      {/* Notification Drawer */}
+      <NotificationDrawer
+        isOpen={isNotifOpen}
+        onClose={() => setIsNotifOpen(false)}
+        notifications={notifications}
+        onMarkAsRead={(id) => {
+          setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+        }}
+      />
+
+      {/* User Auth Modal */}
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
-        initialTab={authModalTab}
+        initialTab={authInitialTab}
         onLoginSuccess={(loggedInUser) => {
           setUser(loggedInUser);
           showToast(`Welcome back, ${loggedInUser.fullName || loggedInUser.email}!`);
@@ -511,23 +536,18 @@ export function App() {
           user={user}
           onProfileUpdated={(updatedUser) => {
             setUser(updatedUser);
-            showToast('Profile updated successfully!');
+            showToast('Profile details updated successfully!');
           }}
         />
       )}
 
-      {/* Notifications Drawer */}
-      <NotificationDrawer
-        isOpen={isNotifOpen}
-        onClose={() => setIsNotifOpen(false)}
-        notifications={notifications}
-        onMarkAllRead={() => setNotifications(prev => prev.map(n => ({ ...n, read: true })))}
-      />
-
-      {/* Footer */}
+      {/* Footer Component */}
       <Footer
         setActiveTab={setActiveTab}
-        onSelectCategory={(catId) => setSelectedCategory(catId)}
+        onSelectCategory={(catId) => {
+          setSelectedCategory(catId);
+          setActiveTab('products');
+        }}
       />
     </div>
   );

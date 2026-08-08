@@ -1,11 +1,11 @@
 import React from 'react';
-import { Star, Heart, GitCompare, ExternalLink, ArrowRight, TrendingDown, Tag, CheckCircle2 } from 'lucide-react';
+import { Star, Heart, GitCompare, ExternalLink, ShieldCheck, Sparkles } from 'lucide-react';
 import { Product } from '../types';
 
 interface ProductCardProps {
   product: Product;
   onOpenDetail: (product: Product) => void;
-  onToggleWishlist: (product: Product) => void;
+  onToggleWishlist: (productId: string) => void;
   isWishlisted: boolean;
   onToggleCompare: (product: Product) => void;
   isCompared: boolean;
@@ -22,143 +22,142 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   onTrackAffiliateClick
 }) => {
   const topStore = product.stores[0];
-  const savingsAmount = product.originalPrice - product.bestPrice;
 
   return (
-    <div 
-      className="material-card flex flex-col justify-between overflow-hidden relative group bg-white border border-[#E8EAED] hover:border-[#BDC1C6] rounded-2xl cursor-pointer"
-      onClick={() => onOpenDetail(product)}
-    >
-      {/* Top Action & Badge Row */}
-      <div className="absolute top-3 left-3 right-3 flex items-center justify-between z-10 pointer-events-none">
-        <div className="flex items-center gap-1.5 pointer-events-auto">
-          {product.discountPercentage > 0 && (
-            <span className="badge-discount">
-              -{product.discountPercentage}%
-            </span>
-          )}
-          {product.badge && (
-            <span className="badge-best-price">
-              {product.badge}
-            </span>
-          )}
-        </div>
+    <div className="material-card bg-white rounded-xl border border-[#E5E7EB] hover:border-[#E52E2E] transition-all duration-300 flex flex-col justify-between overflow-hidden group relative shadow-xs">
+      
+      {/* Top Image Container */}
+      <div className="relative h-44 sm:h-48 bg-[#F8F9FA] p-4 flex items-center justify-center border-b border-[#E5E7EB] overflow-hidden">
+        
+        {/* eMarket Style CIRCULAR RED DISCOUNT BADGE (Top Right) */}
+        {product.discountPercentage > 0 && (
+          <div className="absolute top-2.5 right-2.5 badge-discount-circle z-10">
+            -{product.discountPercentage}%
+          </div>
+        )}
 
-        <div className="flex items-center gap-1 pointer-events-auto">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggleCompare(product);
-            }}
-            className={`p-1.5 rounded-full text-xs transition-all ${
-              isCompared 
-                ? 'bg-[#1A73E8] text-white' 
-                : 'bg-white/90 text-[#5F6368] hover:text-[#202124] border border-[#E8EAED]'
-            }`}
-            title={isCompared ? 'Remove from Compare' : 'Add to Compare'}
-          >
-            <GitCompare size={14} />
-          </button>
+        {/* Today's Flash Deal Badge (Top Left) */}
+        {product.isTodayDeal && (
+          <span className="absolute top-2.5 left-2.5 bg-[#E52E2E] text-white text-[10px] font-black uppercase px-2 py-0.5 rounded z-10 shadow-xs">
+            HOT DEAL
+          </span>
+        )}
 
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggleWishlist(product);
-            }}
-            className={`p-1.5 rounded-full text-xs transition-all ${
-              isWishlisted
-                ? 'bg-[#D93025] text-white'
-                : 'bg-white/90 text-[#5F6368] hover:text-[#D93025] border border-[#E8EAED]'
-            }`}
-            title={isWishlisted ? 'Saved in Wishlist' : 'Add to Wishlist'}
-          >
-            <Heart size={14} className={isWishlisted ? 'fill-white' : ''} />
-          </button>
-        </div>
-      </div>
-
-      {/* Product Image Area */}
-      <div className="p-4 bg-[#F8F9FA] flex items-center justify-center relative overflow-hidden h-44 sm:h-52">
+        {/* Product Image */}
         <img
           src={product.mainImage}
           alt={product.title}
-          className="max-h-36 sm:max-h-44 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+          onClick={() => onOpenDetail(product)}
+          className="max-h-36 sm:max-h-40 w-auto object-contain cursor-pointer group-hover:scale-105 transition-transform duration-300"
         />
+
+        {/* Quick Action Overlay Buttons (Wishlist & Compare) */}
+        <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <button
+            onClick={() => onToggleWishlist(product.id)}
+            className={`p-2 rounded-full border shadow-md transition-all ${
+              isWishlisted
+                ? 'bg-[#E52E2E] text-white border-[#E52E2E]'
+                : 'bg-white text-gray-600 border-[#E5E7EB] hover:bg-[#FEF2F2] hover:text-[#E52E2E]'
+            }`}
+            title="Add to Wishlist"
+          >
+            <Heart size={14} className={isWishlisted ? 'fill-white' : ''} />
+          </button>
+
+          <button
+            onClick={() => onToggleCompare(product)}
+            className={`p-2 rounded-full border shadow-md transition-all ${
+              isCompared
+                ? 'bg-[#1E2530] text-white border-[#1E2530]'
+                : 'bg-white text-gray-600 border-[#E5E7EB] hover:bg-[#F4F5F7] hover:text-[#1E2530]'
+            }`}
+            title="Add to Compare"
+          >
+            <GitCompare size={14} />
+          </button>
+        </div>
       </div>
 
       {/* Product Content Details */}
-      <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
-        <div>
-          {/* Brand & Category */}
-          <div className="text-[11px] font-semibold text-[#5F6368] uppercase tracking-wider mb-1">
+      <div className="p-4 space-y-2.5 flex-1 flex flex-col justify-between">
+        <div className="space-y-1">
+          <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block">
             {product.brand}
-          </div>
-
-          {/* Title */}
-          <h3 className="font-medium text-sm sm:text-base text-[#202124] line-clamp-2 group-hover:text-[#1A73E8] transition-colors">
+          </span>
+          <h3
+            onClick={() => onOpenDetail(product)}
+            className="text-xs sm:text-sm font-bold text-[#1E2530] hover:text-[#E52E2E] cursor-pointer line-clamp-2 leading-snug transition-colors"
+          >
             {product.title}
           </h3>
-
-          {/* Star Rating */}
-          <div className="flex items-center gap-1.5 text-xs mt-2">
-            <div className="flex items-center gap-1 text-[#F9AB00] font-bold text-xs">
-              <Star size={13} className="fill-[#F9AB00] text-[#F9AB00]" />
-              <span>{product.rating}</span>
-            </div>
-            <span className="text-[#5F6368] text-xs">({product.reviewCount.toLocaleString('en-IN')})</span>
-          </div>
         </div>
 
-        {/* Pricing Hierarchy */}
-        <div className="pt-2 border-t border-[#E8EAED] space-y-1.5">
-          <div className="flex items-baseline gap-2 flex-wrap">
-            <span className="text-xl sm:text-2xl font-bold text-[#202124]">
+        {/* Rating Stars & Review Count */}
+        <div className="flex items-center gap-1.5 text-xs">
+          <div className="flex items-center gap-0.5 text-[#F59E0B]">
+            {[...Array(5)].map((_, i) => (
+              <Star
+                key={i}
+                size={12}
+                className={i < Math.floor(product.rating) ? 'fill-[#F59E0B] text-[#F59E0B]' : 'text-gray-300'}
+              />
+            ))}
+          </div>
+          <span className="text-[11px] font-bold text-[#1E2530]">{product.rating}</span>
+          <span className="text-[10px] text-gray-400">({product.reviewCount})</span>
+        </div>
+
+        {/* Price & Merchant Info */}
+        <div className="pt-2 border-t border-[#E5E7EB] space-y-2">
+          <div className="flex items-baseline gap-2">
+            <span className="text-base sm:text-lg font-black text-[#E52E2E]">
               ₹{product.bestPrice.toLocaleString('en-IN')}
             </span>
             {product.originalPrice > product.bestPrice && (
-              <span className="text-xs sm:text-sm text-[#5F6368] line-through">
+              <span className="text-xs text-gray-400 line-through">
                 ₹{product.originalPrice.toLocaleString('en-IN')}
               </span>
             )}
           </div>
 
-          {savingsAmount > 0 && (
-            <div className="flex items-center justify-between text-xs text-[#188038] font-semibold">
-              <span>Save ₹{savingsAmount.toLocaleString('en-IN')}</span>
-              <span className="text-[10px] bg-[#E6F4EA] px-2 py-0.5 rounded-full font-bold">
-                Best Price
-              </span>
-            </div>
-          )}
-        </div>
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="text-gray-500 font-semibold">Available on:</span>
+            <span className="font-extrabold text-[#1E2530] bg-[#F4F5F7] px-2 py-0.5 rounded border border-[#E5E7EB]">
+              {topStore ? topStore.store : 'Top Retailers'}
+            </span>
+          </div>
 
-        {/* Action Buttons */}
-        <div className="grid grid-cols-2 gap-2 pt-1">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onOpenDetail(product);
-            }}
-            className="btn-secondary text-xs font-semibold py-2 justify-center"
-          >
-            Compare Prices
-          </button>
-
-          {topStore && (
-            <a
-              href={topStore.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => {
-                e.stopPropagation();
-                onTrackAffiliateClick(product.id, topStore.store);
-              }}
-              className="btn-primary text-xs font-semibold py-2 justify-center truncate"
+          {/* Primary Action Button */}
+          <div className="grid grid-cols-2 gap-1.5 pt-1">
+            <button
+              onClick={() => onOpenDetail(product)}
+              className="btn-secondary text-[11px] font-bold py-2 justify-center rounded"
             >
-              Buy {topStore.store} <ExternalLink size={12} />
-            </a>
-          )}
+              Compare
+            </button>
+
+            {topStore ? (
+              <a
+                href={topStore.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => onTrackAffiliateClick(product.id, topStore.store)}
+                className="btn-primary text-[11px] font-bold py-2 justify-center rounded"
+              >
+                Buy Deal <ExternalLink size={11} />
+              </a>
+            ) : (
+              <button
+                onClick={() => onOpenDetail(product)}
+                className="btn-primary text-[11px] font-bold py-2 justify-center rounded"
+              >
+                View Deal
+              </button>
+            )}
+          </div>
         </div>
+
       </div>
     </div>
   );
