@@ -48,23 +48,23 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   const minHistoryPrice = Math.min(...allHistoryPrices, product.bestPrice);
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto" onClick={onClose}>
       <div 
-        className="modal-content text-white p-6 max-w-4xl w-full"
+        className="bg-white text-[#202124] p-6 max-w-4xl w-full rounded-3xl border border-[#E8EAED] shadow-2xl space-y-6 my-8"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
-        <div className="flex items-start justify-between pb-4 border-b border-white/10">
+        <div className="flex items-start justify-between pb-4 border-b border-[#E8EAED]">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs font-bold text-indigo-400 uppercase tracking-widest bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20">
+              <span className="text-xs font-bold text-[#1A73E8] uppercase tracking-widest bg-[#E8F0FE] px-2 py-0.5 rounded-full">
                 {product.brand} • {product.category}
               </span>
               {product.badge && (
-                <span className="badge-tag badge-deal">{product.badge}</span>
+                <span className="badge-best-price">{product.badge}</span>
               )}
             </div>
-            <h2 className="text-xl sm:text-2xl font-extrabold text-white">{product.title}</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-[#202124]">{product.title}</h2>
           </div>
 
           <div className="flex items-center gap-2">

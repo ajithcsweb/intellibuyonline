@@ -1,17 +1,16 @@
 import React from 'react';
 import { 
-  Grid, 
   Smartphone, 
   Laptop, 
-  Watch, 
   Headphones, 
+  Keyboard, 
   Tv, 
+  Camera, 
+  Watch, 
+  Gamepad2, 
   Home, 
-  Coffee, 
-  ShoppingBag, 
-  Sparkles, 
-  Armchair, 
-  ShoppingBasket 
+  Zap,
+  Grid
 } from 'lucide-react';
 import { Category } from '../types';
 
@@ -21,19 +20,33 @@ interface CategoryNavProps {
   onSelectCategory: (categoryId: string) => void;
 }
 
-const ICON_MAP: Record<string, React.ElementType> = {
-  Grid,
-  Smartphone,
-  Laptop,
-  Watch,
-  Headphones,
-  Tv,
-  Home,
-  Coffee,
-  ShoppingBag,
-  Sparkles,
-  Armchair,
-  ShoppingBasket
+const CATEGORY_EMOJI: Record<string, string> = {
+  smartphones: '📱',
+  mobiles: '📱',
+  laptops: '💻',
+  headphones: '🎧',
+  earbuds: '🎧',
+  accessories: '⌨️',
+  monitors: '🖥',
+  cameras: '📷',
+  smartwatches: '⌚',
+  gaming: '🎮',
+  'smart-home': '🏠',
+  gadgets: '⚡'
+};
+
+const CATEGORY_ICONS: Record<string, React.ElementType> = {
+  smartphones: Smartphone,
+  mobiles: Smartphone,
+  laptops: Laptop,
+  headphones: Headphones,
+  accessories: Keyboard,
+  monitors: Tv,
+  cameras: Camera,
+  smartwatches: Watch,
+  gaming: Gamepad2,
+  'smart-home': Home,
+  gadgets: Zap
 };
 
 export const CategoryNav: React.FC<CategoryNavProps> = ({
@@ -41,43 +54,57 @@ export const CategoryNav: React.FC<CategoryNavProps> = ({
   selectedCategory,
   onSelectCategory
 }) => {
+  const displayCategories = categories.filter(c => c.id !== 'all');
+
   return (
-    <div className="mb-8">
-      <div className="flex items-center justify-between mb-3">
-        <h2 className="text-sm font-extrabold uppercase tracking-wider text-gray-400 font-heading">
-          Explore Product Categories
-        </h2>
-        <span className="text-xs text-indigo-400 font-semibold cursor-pointer hover:underline" onClick={() => onSelectCategory('all')}>
-          View All ({categories.reduce((acc, c) => acc + c.count, 0)} Items)
-        </span>
+    <section className="mb-12">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#202124] tracking-tight">
+            Shop by Category
+          </h2>
+          <p className="text-sm text-[#5F6368] mt-1">
+            Browse top electronic categories to compare prices & discover deals.
+          </p>
+        </div>
+        <button
+          onClick={() => onSelectCategory('all')}
+          className="text-sm font-semibold text-[#1A73E8] hover:underline"
+        >
+          View All ({categories.reduce((acc, c) => acc + c.count, 0)} Products)
+        </button>
       </div>
 
-      <div className="flex items-center gap-2.5 overflow-x-auto no-scrollbar py-1">
-        {categories.map(cat => {
-          const IconComponent = ICON_MAP[cat.iconName] || Grid;
+      {/* Grid of Clean Material Category Cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3.5 sm:gap-4">
+        {displayCategories.map(cat => {
+          const IconComp = CATEGORY_ICONS[cat.id] || Grid;
+          const emoji = CATEGORY_EMOJI[cat.id] || '🏷️';
           const isSelected = selectedCategory === cat.id;
 
           return (
-            <button
+            <div
               key={cat.id}
               onClick={() => onSelectCategory(cat.id)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all border ${
+              className={`material-card p-4 rounded-2xl cursor-pointer text-center group transition-all flex flex-col items-center justify-between ${
                 isSelected
-                  ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-indigo-400 shadow-lg shadow-indigo-600/30 scale-105'
-                  : 'bg-slate-900/80 text-gray-300 border-white/10 hover:border-indigo-500/40 hover:bg-slate-800'
+                  ? 'border-[#1A73E8] bg-[#E8F0FE] shadow-sm'
+                  : 'bg-white border-[#E8EAED] hover:border-[#BDC1C6]'
               }`}
             >
-              <IconComponent size={16} className={isSelected ? 'text-white' : 'text-indigo-400'} />
-              <span>{cat.name}</span>
-              <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                isSelected ? 'bg-white/20 text-white' : 'bg-slate-800 text-gray-400'
-              }`}>
-                {cat.count}
+              <div className="w-12 h-12 rounded-2xl bg-[#F8F9FA] group-hover:bg-[#E8F0FE] flex items-center justify-center text-xl mb-3 transition-colors">
+                <span>{emoji}</span>
+              </div>
+              <h3 className={`text-sm font-semibold truncate w-full ${isSelected ? 'text-[#1A73E8]' : 'text-[#202124]'}`}>
+                {cat.name}
+              </h3>
+              <span className="text-[11px] text-[#5F6368] font-medium mt-1">
+                {cat.count} Deals
               </span>
-            </button>
+            </div>
           );
         })}
       </div>
-    </div>
+    </section>
   );
 };

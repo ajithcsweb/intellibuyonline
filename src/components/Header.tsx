@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
   Search, 
-  ShoppingBag, 
   Sparkles, 
   Tag, 
   GitCompare, 
@@ -21,17 +20,18 @@ import {
   Headphones,
   Tv,
   Home,
-  Coffee,
-  ShoppingBasket,
-  SlidersHorizontal,
+  Keyboard,
+  Camera,
+  Gamepad2,
   Zap,
-  Star,
+  TrendingUp,
+  User, 
+  LogOut,
   Sun,
   Moon
 } from 'lucide-react';
 import { Product, Category } from '../types';
 import { UserProfile } from '../services/authService';
-import { User, LogOut } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 
 interface HeaderProps {
@@ -55,17 +55,19 @@ interface HeaderProps {
 }
 
 const CATEGORY_ICONS: Record<string, React.ElementType> = {
+  smartphones: Smartphone,
   mobiles: Smartphone,
   laptops: Laptop,
-  smartwatches: Watch,
+  headphones: Headphones,
   earbuds: Headphones,
+  accessories: Keyboard,
+  monitors: Tv,
   tvs: Tv,
-  'home-appliances': Home,
-  kitchen: Coffee,
-  fashion: ShoppingBag,
-  beauty: Sparkles,
-  furniture: Home,
-  grocery: ShoppingBasket
+  cameras: Camera,
+  smartwatches: Watch,
+  gaming: Gamepad2,
+  'smart-home': Home,
+  gadgets: Zap
 };
 
 export const Header: React.FC<HeaderProps> = ({
@@ -97,7 +99,6 @@ export const Header: React.FC<HeaderProps> = ({
   const categoriesRef = useRef<HTMLDivElement>(null);
   const dealsRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdowns on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (categoriesRef.current && !categoriesRef.current.contains(event.target as Node)) {
@@ -120,22 +121,24 @@ export const Header: React.FC<HeaderProps> = ({
     : [];
 
   return (
-    <header className="sticky top-0 z-50 bg-slate-950 border-b border-white/10 shadow-2xl">
+    <header className="sticky top-0 z-50 bg-white border-b border-[#E8EAED] shadow-xs transition-colors">
       {/* Top Banner Ticker */}
-      <div className="bg-gradient-to-r from-indigo-900/90 via-purple-900/90 to-indigo-900/90 text-xs py-1.5 px-4 border-b border-white/5">
-        <div className="max-w-7xl mx-auto flex items-center justify-between text-gray-300">
+      <div className="bg-[#F8F9FA] text-xs py-1.5 px-4 border-b border-[#E8EAED]">
+        <div className="max-w-7xl mx-auto flex items-center justify-between text-[#5F6368]">
           <div className="flex items-center gap-2 overflow-hidden">
-            <span className="bg-rose-500/30 text-rose-300 font-extrabold px-2 py-0.5 rounded text-[10px] uppercase flex items-center gap-1 shadow">
-              <Flame size={12} /> LIVE DEALS
+            <span className="bg-[#E6F4EA] text-[#188038] font-bold px-2 py-0.5 rounded-full text-[10px] uppercase flex items-center gap-1">
+              <Flame size={12} /> BEST DEALS TODAY
             </span>
-            <span className="truncate text-white font-medium">🔥 iPhone 15 Pro Max ₹25,000 Off | Sony WF-1000XM5 flat 20% discount on Amazon!</span>
+            <span className="truncate text-[#202124] font-medium text-[11px] sm:text-xs">
+              🔥 iPhone 15 Pro Max ₹25,000 Off | Sony WF-1000XM5 flat 20% discount across Amazon & Flipkart!
+            </span>
           </div>
-          <div className="hidden md:flex items-center gap-4 text-gray-300 text-[11px] font-semibold">
-            <span>🛡️ 100% Verified Stores</span>
-            <span>⚡ Real-Time Price Tracker</span>
+          <div className="hidden md:flex items-center gap-4 text-[#5F6368] text-[11px] font-semibold">
+            <span>🛡️ Verified Indian Retailers</span>
+            <span>⚡ Real-Time Price Graph</span>
             <button 
               onClick={() => setActiveTab('admin')} 
-              className="text-indigo-300 hover:text-white flex items-center gap-1 font-bold transition-colors bg-indigo-600/30 px-2 py-0.5 rounded border border-indigo-500/30"
+              className="text-[#1A73E8] hover:underline flex items-center gap-1 font-bold"
             >
               <ShieldCheck size={14} /> Admin Portal
             </button>
@@ -148,7 +151,7 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Mobile Hamburger Button */}
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="md:hidden p-2 rounded-xl bg-slate-900 text-gray-300 border border-white/10 hover:text-white"
+          className="md:hidden p-2 rounded-lg bg-[#F8F9FA] text-[#5F6368] border border-[#E8EAED] hover:text-[#202124]"
           aria-label="Toggle Navigation Menu"
         >
           {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -162,39 +165,43 @@ export const Header: React.FC<HeaderProps> = ({
           }}
           className="flex items-center gap-2.5 cursor-pointer group"
         >
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-emerald-500 p-0.5 shadow-lg shadow-indigo-500/25 group-hover:scale-105 transition-transform">
-            <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-indigo-400 animate-pulse" />
-            </div>
+          <div className="w-9 h-9 rounded-xl bg-[#1A73E8] flex items-center justify-center text-white shadow-sm group-hover:scale-105 transition-transform">
+            <Sparkles className="w-5 h-5 text-white" />
           </div>
           <div>
-            <div className="flex items-center gap-1">
-              <span className="font-extrabold text-xl tracking-tight text-white font-heading">Intelli<span className="text-indigo-400">Buy</span></span>
-              <span className="text-[10px] font-extrabold bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-500/30">.in</span>
+            <div className="flex items-center gap-1.5">
+              <span className="font-extrabold text-xl tracking-tight text-[#202124] font-sans">
+                Intelli<span className="text-[#1A73E8]">Buy</span>
+              </span>
+              <span className="text-[10px] font-bold bg-[#E6F4EA] text-[#188038] px-1.5 py-0.5 rounded-full">
+                .in
+              </span>
             </div>
-            <p className="text-[11px] text-gray-400 tracking-wide font-medium hidden sm:block">Smart Price Comparison & AI Deals Engine</p>
+            <p className="text-[10px] text-[#5F6368] font-medium hidden sm:block">
+              Find the best tech deal. Compare before you buy.
+            </p>
           </div>
         </div>
 
         {/* Global Search Bar */}
-        <div className="relative flex-1 max-w-xl">
+        <div className="relative flex-1 max-w-xl hidden md:block">
           <div className="relative flex items-center">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#5F6368] w-4 h-4" />
             <input
               type="text"
-              placeholder="Search 100,000+ products (e.g. iPhone 15, MacBook M3)..."
+              placeholder="Search phones, laptops, headphones, gadgets..."
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
                 setShowSearchDropdown(true);
               }}
               onFocus={() => setShowSearchDropdown(true)}
-              className="w-full bg-slate-900/90 text-white text-xs sm:text-sm rounded-xl pl-9 sm:pl-10 pr-8 sm:pr-10 py-2 sm:py-2.5 border border-white/10 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all placeholder:text-gray-500"
+              className="w-full bg-[#F8F9FA] text-[#202124] text-xs sm:text-sm rounded-full pl-10 pr-10 py-2.5 border border-[#E8EAED] focus:border-[#1A73E8] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1A73E8]/20 transition-all placeholder:text-[#5F6368]"
             />
             {searchQuery && (
               <button 
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#5F6368] hover:text-[#202124]"
               >
                 <X size={16} />
               </button>
@@ -203,8 +210,8 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Search Dropdown Results */}
           {showSearchDropdown && searchResults.length > 0 && (
-            <div className="absolute left-0 right-0 top-full mt-2 bg-slate-900/95 border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50 backdrop-blur-xl">
-              <div className="px-3 py-2 text-xs font-bold text-gray-400 border-b border-white/5 flex items-center justify-between">
+            <div className="absolute left-0 right-0 top-full mt-2 bg-white border border-[#E8EAED] rounded-2xl shadow-xl overflow-hidden z-50">
+              <div className="px-3.5 py-2 text-xs font-bold text-[#5F6368] border-b border-[#E8EAED] flex items-center justify-between bg-[#F8F9FA]">
                 <span>SUGGESTED PRODUCTS</span>
                 <span>{searchResults.length} matches</span>
               </div>
@@ -215,18 +222,18 @@ export const Header: React.FC<HeaderProps> = ({
                     onOpenProduct(product);
                     setShowSearchDropdown(false);
                   }}
-                  className="px-3 py-2.5 hover:bg-indigo-600/10 cursor-pointer flex items-center gap-3 border-b border-white/5 last:border-0 transition-colors"
+                  className="px-4 py-2.5 hover:bg-[#F8F9FA] cursor-pointer flex items-center gap-3 border-b border-[#E8EAED] last:border-0 transition-colors"
                 >
-                  <img src={product.mainImage} alt={product.title} className="w-10 h-10 object-cover rounded-md bg-slate-800" />
+                  <img src={product.mainImage} alt={product.title} className="w-10 h-10 object-contain rounded-lg bg-[#F8F9FA] p-1 border border-[#E8EAED]" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold text-white truncate">{product.title}</p>
-                    <div className="flex items-center gap-2 text-[11px] text-gray-400 mt-0.5">
-                      <span className="text-emerald-400 font-bold">₹{product.bestPrice.toLocaleString('en-IN')}</span>
+                    <p className="text-xs font-semibold text-[#202124] truncate">{product.title}</p>
+                    <div className="flex items-center gap-2 text-[11px] text-[#5F6368] mt-0.5">
+                      <span className="text-[#188038] font-bold">₹{product.bestPrice.toLocaleString('en-IN')}</span>
                       <span>•</span>
                       <span>{product.stores.length} Stores compared</span>
                     </div>
                   </div>
-                  <ArrowRight size={14} className="text-gray-500" />
+                  <ArrowRight size={14} className="text-[#5F6368]" />
                 </div>
               ))}
             </div>
@@ -235,73 +242,49 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Action Controls */}
         <div className="flex items-center gap-2 sm:gap-3">
-          <button
-            onClick={() => setActiveTab('ai-assistant')}
-            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-extrabold transition-all ${
-              activeTab === 'ai-assistant'
-                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30'
-                : 'bg-indigo-950/80 text-indigo-300 border border-indigo-500/40 hover:bg-indigo-900/50'
-            }`}
-          >
-            <Sparkles size={15} className="text-indigo-400 animate-pulse" />
-            <span className="hidden sm:inline">AI Smart Advisor</span>
-          </button>
-
+          {/* Compare Tray Toggle */}
           <button
             onClick={() => setActiveTab('compare')}
-            className={`relative p-2.5 rounded-xl text-xs font-semibold border transition-all ${
+            className={`relative p-2.5 rounded-full text-xs font-semibold border transition-all ${
               activeTab === 'compare'
-                ? 'bg-indigo-600/20 text-indigo-400 border-indigo-500/40'
-                : 'bg-slate-900/80 text-gray-300 border-white/10 hover:border-white/20'
+                ? 'bg-[#1A73E8] text-white border-[#1A73E8]'
+                : 'bg-white text-[#5F6368] border-[#E8EAED] hover:bg-[#F8F9FA] hover:text-[#202124]'
             }`}
-            title="Product Comparison Tray"
+            title="Compare Tray"
           >
             <GitCompare size={18} />
             {compareCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 bg-indigo-500 text-white text-[10px] font-extrabold w-5 h-5 rounded-full flex items-center justify-center border-2 border-slate-950">
+              <span className="absolute -top-1 -right-1 bg-[#188038] text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-xs">
                 {compareCount}
               </span>
             )}
           </button>
 
+          {/* Notifications Button */}
           <button
             onClick={onToggleNotif}
-            className="relative p-2.5 rounded-xl text-xs font-semibold bg-slate-900/80 text-gray-300 border border-white/10 hover:border-white/20 transition-all"
-            title="Price Drop Notifications"
+            className="relative p-2.5 rounded-full text-xs font-semibold bg-white text-[#5F6368] border border-[#E8EAED] hover:bg-[#F8F9FA] hover:text-[#202124] transition-all"
+            title="Price Alerts & Notifications"
           >
             <Bell size={18} />
             {unreadNotifCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 bg-rose-500 text-white text-[10px] font-extrabold w-5 h-5 rounded-full flex items-center justify-center border-2 border-slate-950 animate-bounce">
+              <span className="absolute -top-1 -right-1 bg-[#D93025] text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">
                 {unreadNotifCount}
               </span>
             )}
           </button>
 
-          {/* Dark / Light Mode Switcher */}
-          <button
-            onClick={toggleTheme}
-            className="p-2.5 rounded-xl text-xs font-semibold bg-slate-900/80 text-gray-300 border border-white/10 hover:border-indigo-500/50 hover:bg-indigo-600/10 transition-all group flex items-center justify-center"
-            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-            aria-label="Toggle Theme"
-          >
-            {theme === 'dark' ? (
-              <Sun size={18} className="text-amber-400 group-hover:rotate-45 transition-transform duration-300" />
-            ) : (
-              <Moon size={18} className="text-indigo-600 group-hover:-rotate-12 transition-transform duration-300" />
-            )}
-          </button>
-
-          {/* User Member Authentication Control */}
+          {/* User Account Control */}
           {user ? (
             <div className="relative">
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-indigo-600/20 text-white border border-indigo-500/40 hover:bg-indigo-600/30 transition-all text-xs font-bold"
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#F8F9FA] text-[#202124] border border-[#E8EAED] hover:bg-[#E8EAED]/50 transition-all text-xs font-bold"
               >
                 {user.avatarUrl ? (
-                  <img src={user.avatarUrl} alt="" className="w-6 h-6 rounded-full object-cover border border-indigo-400" />
+                  <img src={user.avatarUrl} alt="" className="w-6 h-6 rounded-full object-cover border border-[#1A73E8]" />
                 ) : (
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-indigo-500 to-emerald-500 flex items-center justify-center text-[10px] font-extrabold uppercase">
+                  <div className="w-6 h-6 rounded-full bg-[#1A73E8] flex items-center justify-center text-white text-[10px] font-bold uppercase">
                     {user.fullName ? user.fullName[0] : user.email[0]}
                   </div>
                 )}
@@ -310,10 +293,10 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
 
               {showUserMenu && (
-                <div className="absolute right-0 top-full mt-2 w-56 bg-slate-900 border border-indigo-500/40 rounded-2xl shadow-2xl p-3 z-50 space-y-1.5 backdrop-blur-2xl animate-slideDown text-xs">
-                  <div className="pb-2 border-b border-white/10 px-2">
-                    <p className="font-extrabold text-white truncate">{user.fullName || 'Member'}</p>
-                    <p className="text-[10px] text-gray-400 truncate">{user.email}</p>
+                <div className="absolute right-0 top-full mt-2 w-56 bg-white border border-[#E8EAED] rounded-2xl shadow-xl p-2.5 z-50 space-y-1 text-xs">
+                  <div className="pb-2 border-b border-[#E8EAED] px-2">
+                    <p className="font-bold text-[#202124] truncate">{user.fullName || 'Member'}</p>
+                    <p className="text-[10px] text-[#5F6368] truncate">{user.email}</p>
                   </div>
 
                   <button
@@ -321,9 +304,9 @@ export const Header: React.FC<HeaderProps> = ({
                       onOpenProfileSettings();
                       setShowUserMenu(false);
                     }}
-                    className="w-full text-left p-2 rounded-xl hover:bg-indigo-600/20 text-indigo-300 font-extrabold flex items-center gap-2 border border-white/5 transition-colors"
+                    className="w-full text-left p-2 rounded-xl hover:bg-[#F8F9FA] text-[#202124] font-medium flex items-center gap-2 transition-colors"
                   >
-                    <User size={15} className="text-indigo-400" /> Profile Settings
+                    <User size={15} className="text-[#1A73E8]" /> Profile Settings
                   </button>
 
                   <button
@@ -331,9 +314,9 @@ export const Header: React.FC<HeaderProps> = ({
                       onSignOut();
                       setShowUserMenu(false);
                     }}
-                    className="w-full text-left p-2 rounded-xl hover:bg-rose-600/20 text-rose-300 font-extrabold flex items-center gap-2 border border-white/5 transition-colors"
+                    className="w-full text-left p-2 rounded-xl hover:bg-[#FCE8E6] text-[#D93025] font-medium flex items-center gap-2 transition-colors"
                   >
-                    <LogOut size={15} className="text-rose-400" /> Sign Out
+                    <LogOut size={15} className="text-[#D93025]" /> Sign Out
                   </button>
                 </div>
               )}
@@ -341,7 +324,7 @@ export const Header: React.FC<HeaderProps> = ({
           ) : (
             <button
               onClick={() => onOpenAuth('login')}
-              className="glow-btn px-3.5 py-2 text-xs font-extrabold flex items-center gap-1.5 shrink-0 shadow-lg shadow-indigo-600/30"
+              className="btn-primary text-xs font-semibold shrink-0"
             >
               <User size={15} />
               <span>Sign In</span>
@@ -351,47 +334,72 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Main Navigation Bar */}
-      <div className="border-t border-white/10 bg-slate-950 px-4 shadow-inner">
-        <div className="max-w-7xl mx-auto flex items-center justify-between py-2 text-xs font-bold text-gray-200">
-          <div className="flex items-center gap-2 sm:gap-4 overflow-x-auto no-scrollbar py-0.5">
+      <div className="border-t border-[#E8EAED] bg-white px-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between py-2 text-xs font-semibold text-[#202124]">
+          <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto no-scrollbar py-0.5">
             
-            {/* Catalog Home */}
+            {/* Products Page / Catalog */}
             <button
               onClick={() => {
                 onSelectCategory('all');
-                setActiveTab('shop');
+                setActiveTab('products');
               }}
-              className={`py-1.5 px-3 rounded-xl transition-all flex items-center gap-1.5 ${
-                activeTab === 'shop' && selectedCategory === 'all'
-                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                  : 'bg-slate-900/80 hover:bg-slate-800 text-gray-300 border border-white/5'
+              className={`py-2 px-3.5 rounded-full transition-all flex items-center gap-1.5 whitespace-nowrap ${
+                activeTab === 'products'
+                  ? 'bg-[#1A73E8] text-white font-bold'
+                  : 'hover:bg-[#F8F9FA] text-[#5F6368] hover:text-[#202124]'
               }`}
             >
-              <Grid size={15} /> All Products
+              <Grid size={15} /> Products
             </button>
 
-            {/* Mega Categories Dropdown */}
+            {/* Deals Page */}
+            <button
+              onClick={() => setActiveTab('deals')}
+              className={`py-2 px-3.5 rounded-full transition-all flex items-center gap-1.5 whitespace-nowrap ${
+                activeTab === 'deals'
+                  ? 'bg-[#1A73E8] text-white font-bold'
+                  : 'hover:bg-[#F8F9FA] text-[#5F6368] hover:text-[#202124]'
+              }`}
+            >
+              <Tag size={15} /> Today's Deals
+            </button>
+
+            {/* Price History View */}
+            <button
+              onClick={() => setActiveTab('price-history')}
+              className={`py-2 px-3.5 rounded-full transition-all flex items-center gap-1.5 whitespace-nowrap ${
+                activeTab === 'price-history'
+                  ? 'bg-[#1A73E8] text-white font-bold'
+                  : 'hover:bg-[#F8F9FA] text-[#5F6368] hover:text-[#202124]'
+              }`}
+            >
+              <TrendingUp size={15} /> Price History
+            </button>
+
+            {/* Categories Dropdown */}
             <div className="relative" ref={categoriesRef}>
               <button
                 onClick={() => {
                   setShowCategoriesMenu(!showCategoriesMenu);
                   setShowDealsMenu(false);
                 }}
-                className={`py-1.5 px-3.5 rounded-xl transition-all flex items-center gap-1.5 border ${
-                  showCategoriesMenu 
-                    ? 'bg-indigo-600 text-white border-indigo-400 shadow-lg' 
-                    : 'bg-slate-900/80 hover:bg-slate-800 text-indigo-300 border-indigo-500/30'
+                className={`py-2 px-3.5 rounded-full transition-all flex items-center gap-1.5 whitespace-nowrap ${
+                  showCategoriesMenu || activeTab === 'categories'
+                    ? 'bg-[#F8F9FA] text-[#1A73E8] font-bold border border-[#E8EAED]'
+                    : 'hover:bg-[#F8F9FA] text-[#5F6368] hover:text-[#202124]'
                 }`}
               >
-                <Grid size={15} className="text-indigo-400" /> Categories Menu <ChevronDown size={14} className={`transition-transform duration-200 ${showCategoriesMenu ? 'rotate-180' : ''}`} />
+                <span>Categories</span>
+                <ChevronDown size={14} className={`transition-transform duration-200 ${showCategoriesMenu ? 'rotate-180' : ''}`} />
               </button>
 
-              {/* Categories Mega Menu Grid */}
+              {/* Categories Dropdown Menu */}
               {showCategoriesMenu && (
-                <div className="absolute left-0 top-full mt-2 w-[calc(100vw-2rem)] sm:w-[540px] max-w-[540px] bg-slate-900 border border-indigo-500/40 rounded-2xl shadow-2xl p-3 sm:p-4 z-50 grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 backdrop-blur-2xl animate-slideDown">
-                  <div className="col-span-full pb-2 border-b border-white/10 flex items-center justify-between text-xs font-extrabold text-indigo-400">
-                    <span className="flex items-center gap-1.5"><Grid size={14} /> SELECT PRODUCT CATEGORY</span>
-                    <button onClick={() => setShowCategoriesMenu(false)} className="text-gray-400 hover:text-white"><X size={16} /></button>
+                <div className="absolute left-0 top-full mt-2 w-[calc(100vw-2rem)] sm:w-[500px] bg-white border border-[#E8EAED] rounded-2xl shadow-xl p-4 z-50 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div className="col-span-full pb-2 border-b border-[#E8EAED] flex items-center justify-between text-xs font-bold text-[#5F6368]">
+                    <span>SHOP BY CATEGORY</span>
+                    <button onClick={() => setShowCategoriesMenu(false)} className="text-[#5F6368] hover:text-[#202124]"><X size={16} /></button>
                   </div>
 
                   {categories.filter(c => c.id !== 'all').map(cat => {
@@ -403,28 +411,23 @@ export const Header: React.FC<HeaderProps> = ({
                         key={cat.id}
                         onClick={() => {
                           onSelectCategory(cat.id);
-                          setActiveTab('shop');
+                          setActiveTab('products');
                           setShowCategoriesMenu(false);
                         }}
-                        className={`p-3 rounded-xl cursor-pointer transition-all border ${
+                        className={`p-2.5 rounded-xl cursor-pointer transition-all border ${
                           isSelected
-                            ? 'bg-indigo-600/30 border-indigo-400 text-white'
-                            : 'bg-slate-950/70 hover:bg-indigo-600/20 border-white/5 hover:border-indigo-500/40 text-gray-300'
+                            ? 'bg-[#E8F0FE] border-[#1A73E8] text-[#1A73E8]'
+                            : 'bg-white hover:bg-[#F8F9FA] border-[#E8EAED] text-[#202124]'
                         }`}
                       >
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="font-extrabold text-xs text-white flex items-center gap-2">
-                            <IconComp size={16} className="text-indigo-400" /> {cat.name}
+                        <div className="flex items-center justify-between">
+                          <span className="font-semibold text-xs flex items-center gap-2">
+                            <IconComp size={16} className="text-[#1A73E8]" /> {cat.name}
                           </span>
-                          <span className="text-[10px] bg-indigo-500/20 text-indigo-300 font-extrabold px-2 py-0.5 rounded border border-indigo-500/30">
-                            {cat.count} Items
+                          <span className="text-[10px] bg-[#F8F9FA] text-[#5F6368] font-bold px-2 py-0.5 rounded-full border border-[#E8EAED]">
+                            {cat.count}
                           </span>
                         </div>
-                        {cat.subcategories.length > 0 && (
-                          <p className="text-[10px] text-gray-400 line-clamp-1">
-                            {cat.subcategories.join(' • ')}
-                          </p>
-                        )}
                       </div>
                     );
                   })}
@@ -432,210 +435,106 @@ export const Header: React.FC<HeaderProps> = ({
               )}
             </div>
 
-            {/* Quick Category Buttons for Mobiles, Laptops, Smartwatches */}
-            {categories.filter(c => ['mobiles', 'laptops', 'smartwatches', 'earbuds', 'tvs'].includes(c.id)).map(cat => {
-              const IconComp = CATEGORY_ICONS[cat.id] || Grid;
-              const isActive = selectedCategory === cat.id && activeTab === 'shop';
-
-              return (
-                <button
-                  key={cat.id}
-                  onClick={() => {
-                    onSelectCategory(cat.id);
-                    setActiveTab('shop');
-                  }}
-                  className={`py-1.5 px-3 rounded-xl transition-all flex items-center gap-1.5 whitespace-nowrap ${
-                    isActive
-                      ? 'bg-indigo-600 text-white border border-indigo-400 shadow-md'
-                      : 'bg-slate-900/80 hover:bg-slate-800 text-gray-300 border border-white/5'
-                  }`}
-                >
-                  <IconComp size={14} className={isActive ? 'text-white' : 'text-indigo-400'} />
-                  <span>{cat.name}</span>
-                </button>
-              );
-            })}
-
-            {/* Deals Menu Dropdown */}
-            <div className="relative" ref={dealsRef}>
-              <button
-                onClick={() => {
-                  setShowDealsMenu(!showDealsMenu);
-                  setShowCategoriesMenu(false);
-                }}
-                className={`py-1.5 px-3.5 rounded-xl transition-all flex items-center gap-1.5 border ${
-                  activeTab === 'deals' || showDealsMenu
-                    ? 'bg-rose-600 text-white border-rose-400 shadow-md'
-                    : 'bg-slate-900/80 hover:bg-slate-800 text-rose-400 border-rose-500/30'
-                }`}
-              >
-                <Tag size={15} className="text-rose-400" /> Today's Deals <ChevronDown size={14} className={`transition-transform duration-200 ${showDealsMenu ? 'rotate-180' : ''}`} />
-              </button>
-
-              {/* Deals Menu Dropdown Card */}
-              {showDealsMenu && (
-                <div className="absolute left-0 top-full mt-2 w-64 bg-slate-900 border border-rose-500/40 rounded-2xl shadow-2xl p-3 z-50 space-y-1.5 backdrop-blur-2xl animate-slideDown">
-                  <button
-                    onClick={() => {
-                      setActiveTab('deals');
-                      setShowDealsMenu(false);
-                    }}
-                    className="w-full text-left p-2.5 rounded-xl hover:bg-rose-600/20 text-white font-extrabold flex items-center gap-2 text-xs border border-white/5"
-                  >
-                    <Flame size={16} className="text-rose-500" /> Today's Flash Deals
-                  </button>
-                  <button
-                    onClick={() => {
-                      setActiveTab('deals');
-                      setShowDealsMenu(false);
-                    }}
-                    className="w-full text-left p-2.5 rounded-xl hover:bg-indigo-600/20 text-indigo-300 font-extrabold flex items-center gap-2 text-xs border border-white/5"
-                  >
-                    <Tag size={16} className="text-indigo-400" /> Verified Coupon Codes
-                  </button>
-                  <button
-                    onClick={() => {
-                      setActiveTab('deals');
-                      setShowDealsMenu(false);
-                    }}
-                    className="w-full text-left p-2.5 rounded-xl hover:bg-amber-600/20 text-amber-300 font-extrabold flex items-center gap-2 text-xs border border-white/5"
-                  >
-                    <ShieldCheck size={16} className="text-amber-400" /> Bank & Card Cashbacks
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* Buying Guides */}
+            {/* Side-by-Side Compare Tool */}
             <button
-              onClick={() => setActiveTab('blog')}
-              className={`py-1.5 px-3 rounded-xl transition-all flex items-center gap-1.5 whitespace-nowrap ${
-                activeTab === 'blog'
-                  ? 'bg-emerald-600 text-white border border-emerald-400 shadow-md'
-                  : 'bg-slate-900/80 hover:bg-slate-800 text-emerald-400 border border-white/5'
+              onClick={() => setActiveTab('compare')}
+              className={`py-2 px-3.5 rounded-full transition-all flex items-center gap-1.5 whitespace-nowrap ${
+                activeTab === 'compare'
+                  ? 'bg-[#1A73E8] text-white font-bold'
+                  : 'hover:bg-[#F8F9FA] text-[#5F6368] hover:text-[#202124]'
               }`}
             >
-              <BookOpen size={15} /> Buying Guides
+              <GitCompare size={15} /> Compare Products
             </button>
+
+            {/* AI Advisor Tab */}
+            <button
+              onClick={() => setActiveTab('ai-assistant')}
+              className={`py-2 px-3.5 rounded-full transition-all flex items-center gap-1.5 whitespace-nowrap font-bold ${
+                activeTab === 'ai-assistant'
+                  ? 'bg-[#1A73E8] text-white'
+                  : 'text-[#1A73E8] hover:bg-[#E8F0FE]'
+              }`}
+            >
+              <Sparkles size={15} /> Ask AI Advisor
+            </button>
+
           </div>
 
-          <div className="hidden xl:flex items-center gap-3 text-xs font-semibold text-gray-400">
-            <span>Stores:</span>
-            <span className="text-amber-400 font-extrabold">Amazon</span>
-            <span className="text-blue-400 font-extrabold">Flipkart</span>
-            <span className="text-emerald-400 font-extrabold">Croma</span>
+          <div className="hidden lg:flex items-center gap-3 text-xs font-medium text-[#5F6368]">
+            <span>Supported Stores:</span>
+            <span className="text-[#FF9900] font-bold">Amazon</span>
+            <span className="text-[#2874F0] font-bold">Flipkart</span>
+            <span className="text-[#10B981] font-bold">Croma</span>
+            <span className="text-[#E11D48] font-bold">Reliance Digital</span>
           </div>
         </div>
       </div>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Drawer Navigation */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-slate-900 border-b border-white/10 p-4 space-y-4 animate-slideDown">
-          {/* Mobile Search Bar */}
+        <div className="md:hidden bg-white border-b border-[#E8EAED] p-4 space-y-4 shadow-lg">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5F6368] w-4 h-4" />
             <input
               type="text"
-              placeholder="Search products..."
+              placeholder="Search phones, laptops, gadgets..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-950 text-white text-xs rounded-xl pl-9 pr-4 py-2.5 border border-white/10"
+              className="w-full bg-[#F8F9FA] text-[#202124] text-xs rounded-full pl-9 pr-4 py-2.5 border border-[#E8EAED]"
             />
           </div>
 
-          <div className="space-y-1.5 text-xs font-extrabold text-gray-200">
-            <div className="flex items-center justify-between px-2 py-1">
-              <span className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">NAVIGATION & THEME</span>
-              <button
-                onClick={toggleTheme}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-950 border border-white/10 text-[11px] font-bold text-amber-400"
-              >
-                {theme === 'dark' ? <Sun size={14} className="text-amber-400" /> : <Moon size={14} className="text-indigo-400" />}
-                <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
-              </button>
-            </div>
+          <div className="space-y-1 text-xs font-semibold text-[#202124]">
             <button
               onClick={() => {
-                onSelectCategory('all');
-                setActiveTab('shop');
+                setActiveTab('products');
                 setIsMobileMenuOpen(false);
               }}
-              className="w-full text-left p-2.5 rounded-xl bg-slate-950 flex items-center justify-between border border-white/5"
+              className="w-full text-left py-2.5 px-3 rounded-xl hover:bg-[#F8F9FA] flex items-center gap-2"
             >
-              <span className="flex items-center gap-2"><ShoppingBag size={16} className="text-indigo-400" /> Catalog Homepage</span>
-              <ArrowRight size={14} className="text-gray-500" />
+              <Grid size={16} className="text-[#1A73E8]" /> Products Catalog
             </button>
+
             <button
               onClick={() => {
                 setActiveTab('deals');
                 setIsMobileMenuOpen(false);
               }}
-              className="w-full text-left p-2.5 rounded-xl bg-slate-950 flex items-center justify-between text-rose-400 border border-white/5"
+              className="w-full text-left py-2.5 px-3 rounded-xl hover:bg-[#F8F9FA] flex items-center gap-2"
             >
-              <span className="flex items-center gap-2"><Tag size={16} /> Deals & Coupon Codes</span>
-              <ArrowRight size={14} className="text-gray-500" />
+              <Tag size={16} className="text-[#188038]" /> Today's Best Deals
             </button>
+
+            <button
+              onClick={() => {
+                setActiveTab('price-history');
+                setIsMobileMenuOpen(false);
+              }}
+              className="w-full text-left py-2.5 px-3 rounded-xl hover:bg-[#F8F9FA] flex items-center gap-2"
+            >
+              <TrendingUp size={16} className="text-[#1A73E8]" /> Price History Graph
+            </button>
+
             <button
               onClick={() => {
                 setActiveTab('compare');
                 setIsMobileMenuOpen(false);
               }}
-              className="w-full text-left p-2.5 rounded-xl bg-slate-950 flex items-center justify-between border border-white/5"
+              className="w-full text-left py-2.5 px-3 rounded-xl hover:bg-[#F8F9FA] flex items-center gap-2"
             >
-              <span className="flex items-center gap-2"><GitCompare size={16} className="text-indigo-400" /> Side-by-Side Comparison ({compareCount})</span>
-              <ArrowRight size={14} className="text-gray-500" />
+              <GitCompare size={16} className="text-[#1A73E8]" /> Compare Products ({compareCount})
             </button>
+
             <button
               onClick={() => {
                 setActiveTab('ai-assistant');
                 setIsMobileMenuOpen(false);
               }}
-              className="w-full text-left p-2.5 rounded-xl bg-slate-950 flex items-center justify-between text-indigo-300 border border-white/5"
+              className="w-full text-left py-2.5 px-3 rounded-xl bg-[#E8F0FE] text-[#1A73E8] font-bold flex items-center gap-2"
             >
-              <span className="flex items-center gap-2"><Sparkles size={16} className="text-indigo-400" /> AI Smart Advisor</span>
-              <ArrowRight size={14} className="text-gray-500" />
+              <Sparkles size={16} /> AI Smart Advisor
             </button>
-            <button
-              onClick={() => {
-                setActiveTab('blog');
-                setIsMobileMenuOpen(false);
-              }}
-              className="w-full text-left p-2.5 rounded-xl bg-slate-950 flex items-center justify-between text-emerald-400 border border-white/5"
-            >
-              <span className="flex items-center gap-2"><BookOpen size={16} /> Buying Guides & Reviews</span>
-              <ArrowRight size={14} className="text-gray-500" />
-            </button>
-            <button
-              onClick={() => {
-                setActiveTab('admin');
-                setIsMobileMenuOpen(false);
-              }}
-              className="w-full text-left p-2.5 rounded-xl bg-slate-950 flex items-center justify-between text-gray-400 border border-white/5"
-            >
-              <span className="flex items-center gap-2"><ShieldCheck size={16} /> Admin Portal</span>
-              <ArrowRight size={14} className="text-gray-500" />
-            </button>
-
-            <div className="text-[10px] text-gray-400 uppercase tracking-widest px-2 py-2 font-bold">CATEGORIES</div>
-            <div className="grid grid-cols-2 gap-2">
-              {categories.filter(c => c.id !== 'all').map(cat => {
-                const IconComp = CATEGORY_ICONS[cat.id] || Grid;
-                return (
-                  <button
-                    key={cat.id}
-                    onClick={() => {
-                      onSelectCategory(cat.id);
-                      setActiveTab('shop');
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="p-2 rounded-xl bg-slate-950 border border-white/5 text-[11px] font-bold text-gray-300 flex items-center gap-1.5"
-                  >
-                    <IconComp size={14} className="text-indigo-400" />
-                    <span className="truncate">{cat.name}</span>
-                  </button>
-                );
-              })}
-            </div>
           </div>
         </div>
       )}

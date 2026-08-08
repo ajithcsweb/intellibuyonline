@@ -1,18 +1,17 @@
 import { Product, Category, Deal, Coupon, BlogPost, AffiliateClickLog, NotificationItem, AdminStats } from '../types';
 
 export const INITIAL_CATEGORIES: Category[] = [
-  { id: 'all', name: 'All Categories', slug: 'all', iconName: 'Grid', count: 24, subcategories: [] },
-  { id: 'mobiles', name: 'Mobiles', slug: 'mobiles', iconName: 'Smartphone', count: 6, subcategories: ['Flagship', 'Mid-Range', 'Budget 5G', 'Foldable'] },
-  { id: 'laptops', name: 'Laptops', slug: 'laptops', iconName: 'Laptop', count: 5, subcategories: ['Gaming', 'Ultrabooks', 'Student', 'MacBook'] },
-  { id: 'smartwatches', name: 'Smart Watches', slug: 'smartwatches', iconName: 'Watch', count: 3, subcategories: ['Fitness Tracker', 'Premium Smartwatch', 'Calling Watch'] },
-  { id: 'earbuds', name: 'Earbuds & Audio', slug: 'earbuds', iconName: 'Headphones', count: 3, subcategories: ['TWS Earbuds', 'ANC Headphones', 'Soundbars'] },
-  { id: 'tvs', name: 'TVs & Entertainment', slug: 'tvs', iconName: 'Tv', count: 2, subcategories: ['OLED 4K', 'QLED', 'Smart LED'] },
-  { id: 'home-appliances', name: 'Home Appliances', slug: 'home-appliances', iconName: 'Home', count: 2, subcategories: ['Washing Machine', 'Air Conditioner', 'Refrigerator'] },
-  { id: 'kitchen', name: 'Kitchen', slug: 'kitchen', iconName: 'Coffee', count: 1, subcategories: ['Air Fryer', 'Mixer Grinder', 'Coffee Maker'] },
-  { id: 'fashion', name: 'Fashion', slug: 'fashion', iconName: 'ShoppingBag', count: 1, subcategories: ['Sneakers', 'Jackets', 'Watches'] },
-  { id: 'beauty', name: 'Beauty & Care', slug: 'beauty', iconName: 'Sparkles', count: 1, subcategories: ['Skincare', 'Grooming Tools'] },
-  { id: 'furniture', name: 'Furniture', slug: 'furniture', iconName: 'Armchair', count: 1, subcategories: ['Ergonomic Chairs', 'Desks'] },
-  { id: 'grocery', name: 'Grocery & Essentials', slug: 'grocery', iconName: 'ShoppingBasket', count: 1, subcategories: ['Superfoods', 'Organic Coffee'] }
+  { id: 'all', name: 'All Categories', slug: 'all', iconName: 'Grid', count: 32, subcategories: [] },
+  { id: 'smartphones', name: 'Smartphones', slug: 'smartphones', iconName: 'Smartphone', count: 8, subcategories: ['Flagship', 'Mid-Range', 'Budget 5G', 'Foldable'] },
+  { id: 'laptops', name: 'Laptops', slug: 'laptops', iconName: 'Laptop', count: 6, subcategories: ['Gaming', 'Ultrabooks', 'Student', 'MacBook'] },
+  { id: 'headphones', name: 'Headphones', slug: 'headphones', iconName: 'Headphones', count: 5, subcategories: ['TWS Earbuds', 'ANC Headphones', 'Soundbars'] },
+  { id: 'accessories', name: 'Computer Accessories', slug: 'accessories', iconName: 'Keyboard', count: 4, subcategories: ['Keyboards', 'Mice', 'Docks', 'Webcams'] },
+  { id: 'monitors', name: 'Monitors', slug: 'monitors', iconName: 'Tv', count: 3, subcategories: ['4K Monitors', 'Gaming Monitors', 'Curved'] },
+  { id: 'cameras', name: 'Cameras', slug: 'cameras', iconName: 'Camera', count: 2, subcategories: ['Mirrorless', 'Vlogging', 'Action Cam'] },
+  { id: 'smartwatches', name: 'Smartwatches', slug: 'smartwatches', iconName: 'Watch', count: 4, subcategories: ['Fitness Tracker', 'Premium Smartwatch', 'Calling Watch'] },
+  { id: 'gaming', name: 'Gaming', slug: 'gaming', iconName: 'Gamepad2', count: 3, subcategories: ['Consoles', 'Controllers', 'Handhelds'] },
+  { id: 'smart-home', name: 'Smart Home', slug: 'smart-home', iconName: 'Home', count: 2, subcategories: ['Smart Speakers', 'Security Cams', 'Smart Lighting'] },
+  { id: 'gadgets', name: 'Gadgets', slug: 'gadgets', iconName: 'Zap', count: 3, subcategories: ['Power Banks', 'MagSafe Accessories', 'Chargers'] }
 ];
 
 export const INITIAL_PRODUCTS: Product[] = [

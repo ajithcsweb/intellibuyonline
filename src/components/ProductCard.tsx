@@ -1,5 +1,5 @@
 import React from 'react';
-import { Star, Heart, GitCompare, ExternalLink, ArrowRight, TrendingDown, Tag } from 'lucide-react';
+import { Star, Heart, GitCompare, ExternalLink, ArrowRight, TrendingDown, Tag, CheckCircle2 } from 'lucide-react';
 import { Product } from '../types';
 
 interface ProductCardProps {
@@ -22,23 +22,24 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   onTrackAffiliateClick
 }) => {
   const topStore = product.stores[0];
+  const savingsAmount = product.originalPrice - product.bestPrice;
 
   return (
     <div 
-      className="glass-card flex flex-col justify-between overflow-hidden relative group border border-white/10 hover:border-indigo-500/50 bg-slate-900/90"
+      className="material-card flex flex-col justify-between overflow-hidden relative group bg-white border border-[#E8EAED] hover:border-[#BDC1C6] rounded-2xl cursor-pointer"
       onClick={() => onOpenDetail(product)}
     >
-      {/* Top Badges */}
+      {/* Top Action & Badge Row */}
       <div className="absolute top-3 left-3 right-3 flex items-center justify-between z-10 pointer-events-none">
-        <div className="flex items-center gap-1.5">
-          {product.badge && (
-            <span className="badge-tag badge-deal shadow-md">
-              {product.badge}
+        <div className="flex items-center gap-1.5 pointer-events-auto">
+          {product.discountPercentage > 0 && (
+            <span className="badge-discount">
+              -{product.discountPercentage}%
             </span>
           )}
-          {product.discountPercentage >= 15 && (
-            <span className="badge-tag badge-emerald shadow-md flex items-center gap-1">
-              <TrendingDown size={11} /> {product.discountPercentage}% OFF
+          {product.badge && (
+            <span className="badge-best-price">
+              {product.badge}
             </span>
           )}
         </div>
@@ -49,14 +50,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               e.stopPropagation();
               onToggleCompare(product);
             }}
-            className={`p-2 rounded-lg text-xs transition-all backdrop-blur-md ${
+            className={`p-1.5 rounded-full text-xs transition-all ${
               isCompared 
-                ? 'bg-indigo-600 text-white border border-indigo-400' 
-                : 'bg-slate-950/70 text-gray-300 hover:text-indigo-400 border border-white/10'
+                ? 'bg-[#1A73E8] text-white' 
+                : 'bg-white/90 text-[#5F6368] hover:text-[#202124] border border-[#E8EAED]'
             }`}
             title={isCompared ? 'Remove from Compare' : 'Add to Compare'}
           >
-            <GitCompare size={15} />
+            <GitCompare size={14} />
           </button>
 
           <button
@@ -64,91 +65,83 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               e.stopPropagation();
               onToggleWishlist(product);
             }}
-            className={`p-2 rounded-lg text-xs transition-all backdrop-blur-md ${
+            className={`p-1.5 rounded-full text-xs transition-all ${
               isWishlisted
-                ? 'bg-rose-600 text-white border border-rose-400'
-                : 'bg-slate-950/70 text-gray-300 hover:text-rose-400 border border-white/10'
+                ? 'bg-[#D93025] text-white'
+                : 'bg-white/90 text-[#5F6368] hover:text-[#D93025] border border-[#E8EAED]'
             }`}
             title={isWishlisted ? 'Saved in Wishlist' : 'Add to Wishlist'}
           >
-            <Heart size={15} className={isWishlisted ? 'fill-white' : ''} />
+            <Heart size={14} className={isWishlisted ? 'fill-white' : ''} />
           </button>
         </div>
       </div>
 
-      {/* Product Image Container */}
-      <div className="p-3 sm:p-6 bg-slate-950/40 flex items-center justify-center relative overflow-hidden group-hover:bg-slate-950/60 transition-colors h-40 sm:h-56">
+      {/* Product Image Area */}
+      <div className="p-4 bg-[#F8F9FA] flex items-center justify-center relative overflow-hidden h-44 sm:h-52">
         <img
           src={product.mainImage}
           alt={product.title}
-          className="max-h-32 sm:max-h-44 w-auto object-contain transition-transform duration-500 group-hover:scale-110"
+          className="max-h-36 sm:max-h-44 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
         />
-        <div className="absolute bottom-1 sm:bottom-2 left-2 sm:left-3 text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-slate-900/80 px-1.5 sm:px-2 py-0.5 rounded border border-white/5 truncate max-w-[80%]">
-          {product.brand} • {product.subcategory}
-        </div>
       </div>
 
-      {/* Card Content Body */}
-      <div className="p-3 sm:p-4 flex-1 flex flex-col justify-between space-y-2 sm:space-y-3">
+      {/* Product Content Details */}
+      <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
         <div>
-          {/* Rating & Reviews */}
-          <div className="flex items-center gap-1.5 text-xs mb-1">
-            <div className="flex items-center gap-1 text-amber-400 font-bold bg-amber-400/10 px-1.5 py-0.5 rounded border border-amber-400/20 text-[10px] sm:text-xs">
-              <Star size={11} className="fill-amber-400" />
-              <span>{product.rating}</span>
-            </div>
-            <span className="text-gray-400 text-[10px] sm:text-[11px] truncate">({product.reviewCount.toLocaleString('en-IN')})</span>
+          {/* Brand & Category */}
+          <div className="text-[11px] font-semibold text-[#5F6368] uppercase tracking-wider mb-1">
+            {product.brand}
           </div>
 
-          {/* Product Title */}
-          <h3 className="font-bold text-xs sm:text-sm text-white line-clamp-2 hover:text-indigo-300 transition-colors cursor-pointer">
+          {/* Title */}
+          <h3 className="font-medium text-sm sm:text-base text-[#202124] line-clamp-2 group-hover:text-[#1A73E8] transition-colors">
             {product.title}
           </h3>
+
+          {/* Star Rating */}
+          <div className="flex items-center gap-1.5 text-xs mt-2">
+            <div className="flex items-center gap-1 text-[#F9AB00] font-bold text-xs">
+              <Star size={13} className="fill-[#F9AB00] text-[#F9AB00]" />
+              <span>{product.rating}</span>
+            </div>
+            <span className="text-[#5F6368] text-xs">({product.reviewCount.toLocaleString('en-IN')})</span>
+          </div>
         </div>
 
-        {/* Store Comparison Price Chips */}
-        <div className="space-y-1.5 sm:space-y-2 pt-2 border-t border-white/5">
-          <div className="flex items-baseline justify-between flex-wrap gap-1">
-            <span className="text-[10px] sm:text-xs text-gray-400 font-medium">Best Price:</span>
-            <div className="flex items-baseline gap-1">
-              <span className="text-base sm:text-lg font-extrabold text-emerald-400 font-heading">
-                ₹{product.bestPrice.toLocaleString('en-IN')}
-              </span>
-              <span className="text-[10px] sm:text-xs text-gray-500 line-through">
+        {/* Pricing Hierarchy */}
+        <div className="pt-2 border-t border-[#E8EAED] space-y-1.5">
+          <div className="flex items-baseline gap-2 flex-wrap">
+            <span className="text-xl sm:text-2xl font-bold text-[#202124]">
+              ₹{product.bestPrice.toLocaleString('en-IN')}
+            </span>
+            {product.originalPrice > product.bestPrice && (
+              <span className="text-xs sm:text-sm text-[#5F6368] line-through">
                 ₹{product.originalPrice.toLocaleString('en-IN')}
               </span>
-            </div>
+            )}
           </div>
 
-          {/* Available Stores Badge List */}
-          <div className="flex items-center justify-between text-[10px] sm:text-[11px] text-gray-400 bg-slate-950/60 p-1.5 sm:p-2 rounded-lg border border-white/5">
-            <span className="font-medium truncate">{product.stores.length} Stores:</span>
-            <div className="flex items-center gap-1">
-              {product.stores.slice(0, 2).map((st, i) => (
-                <span 
-                  key={i} 
-                  className="px-1.5 py-0.5 rounded text-[9px] sm:text-[10px] font-extrabold bg-white/10 text-gray-200"
-                >
-                  {st.store}
-                </span>
-              ))}
-              {product.stores.length > 2 && (
-                <span className="text-[9px] text-indigo-400 font-bold">+{product.stores.length - 2}</span>
-              )}
+          {savingsAmount > 0 && (
+            <div className="flex items-center justify-between text-xs text-[#188038] font-semibold">
+              <span>Save ₹{savingsAmount.toLocaleString('en-IN')}</span>
+              <span className="text-[10px] bg-[#E6F4EA] px-2 py-0.5 rounded-full font-bold">
+                Best Price
+              </span>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2 pt-1">
+        <div className="grid grid-cols-2 gap-2 pt-1">
           <button
             onClick={(e) => {
               e.stopPropagation();
               onOpenDetail(product);
             }}
-            className="w-full py-1.5 sm:py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-gray-200 text-[11px] sm:text-xs font-bold transition-all border border-white/10 flex items-center justify-center gap-1"
+            className="btn-secondary text-xs font-semibold py-2 justify-center"
           >
-            Compare
+            Compare Prices
           </button>
 
           {topStore && (
@@ -160,9 +153,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 e.stopPropagation();
                 onTrackAffiliateClick(product.id, topStore.store);
               }}
-              className="w-full py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-[11px] sm:text-xs font-extrabold shadow-md shadow-emerald-900/30 transition-all flex items-center justify-center gap-1 truncate"
+              className="btn-primary text-xs font-semibold py-2 justify-center truncate"
             >
-              Buy {topStore.store} <ExternalLink size={11} />
+              Buy {topStore.store} <ExternalLink size={12} />
             </a>
           )}
         </div>
