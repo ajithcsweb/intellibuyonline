@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Mail, Lock, User, Sparkles, ArrowRight, CheckCircle2, AlertCircle, KeyRound, ShieldCheck, Zap } from 'lucide-react';
+import { X, Mail, Lock, User, Phone, Sparkles, ArrowRight, CheckCircle2, AlertCircle, KeyRound, ShieldCheck, Zap } from 'lucide-react';
 import { signUpWithEmail, signInWithEmail, sendPasswordResetEmail, quickDemoSignIn, UserProfile } from '../services/authService';
 
 interface AuthModalProps {
@@ -19,6 +19,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   // Form State
   const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -101,7 +102,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }
 
     setLoading(true);
-    const { user, error } = await signUpWithEmail(email, password, fullName);
+    const { user, error } = await signUpWithEmail(email, password, fullName, phone.trim());
     setLoading(false);
 
     if (error) {
@@ -276,7 +277,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
         {/* Tab 2: REGISTER FORM */}
         {activeTab === 'register' && (
-          <form onSubmit={handleRegister} className="space-y-3.5">
+          <form onSubmit={handleRegister} className="space-y-3">
             <div>
               <label className="text-xs font-semibold text-[#202124] block mb-1">Full Name</label>
               <div className="relative">
@@ -302,6 +303,20 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   placeholder="name@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  className="w-full bg-[#F8F9FA] text-[#202124] text-xs rounded-xl pl-10 pr-4 py-2.5 border border-[#E8EAED] focus:border-[#1A73E8] focus:bg-white focus:outline-none"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold text-[#202124] block mb-1">Mobile Phone Number (Optional)</label>
+              <div className="relative">
+                <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#5F6368] w-4 h-4" />
+                <input
+                  type="tel"
+                  placeholder="+91 98765 43210"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
                   className="w-full bg-[#F8F9FA] text-[#202124] text-xs rounded-xl pl-10 pr-4 py-2.5 border border-[#E8EAED] focus:border-[#1A73E8] focus:bg-white focus:outline-none"
                 />
               </div>
